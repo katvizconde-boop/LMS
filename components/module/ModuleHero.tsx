@@ -8,6 +8,7 @@ type Props = {
   durationMinutes: number | null;
   audienceLabel: string | null;
   format?: string;
+  rightSlot?: React.ReactNode;
 };
 
 const LEVEL_LABEL: Record<ModuleLevel, string> = {
@@ -25,6 +26,7 @@ export function ModuleHero({
   durationMinutes,
   audienceLabel,
   format = "Self-paced",
+  rightSlot,
 }: Props) {
   return (
     <section className="relative overflow-hidden bg-navy text-cream">
@@ -37,6 +39,11 @@ export function ModuleHero({
         }}
       />
       <div className="relative mx-auto max-w-[1100px] px-6 py-20 sm:px-8 sm:py-28">
+        {rightSlot ? (
+          <div className="absolute right-6 top-6 sm:right-8 sm:top-8">
+            {rightSlot}
+          </div>
+        ) : null}
         <div className="label-mono mb-6 inline-block rounded-sm border border-gold px-3 py-1.5">
           Module {number} &nbsp;·&nbsp; {LEVEL_LABEL[level]}
         </div>

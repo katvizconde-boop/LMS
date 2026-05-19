@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { TopBar } from "@/components/learner/TopBar";
+import { BookmarkCheck, Award } from "lucide-react";
 
 export const metadata = { title: "Dashboard — Seven Generation Learning" };
 
@@ -24,13 +25,26 @@ export default async function DashboardPage() {
     orderBy: { enrolledAt: "desc" },
   });
 
-  const moduleIds = enrollments.flatMap((e) => e.program.modules.map((m) => m.id));
-  const progress = moduleIds.length
-    ? await db.moduleProgress.findMany({
-        where: { userId, moduleId: { in: moduleIds }, completedAt: { not: null } },
-        select: { moduleId: true },
-      })
-    : [];
+  const moduleIds = enrollments.flatMap((e) =>
+    e.program.modules.map((m) => m.id),
+  );
+  const [progress, bookmarks] = await Promise.all([
+    moduleIds.length
+      ? db.moduleProgress.findMany({
+          where: { userId, moduleId: { in: moduleIds }, completedAt: { not: null } },
+          select: { moduleId: true },
+        })
+      : Promise.resolve([] as { moduleId: string }[]),
+    db.bookmark.findMany({
+      where: { userId },
+      include: {
+        module: {
+          include: { program: { select: { slug: true, title: true } } },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
   const completedSet = new Set(progress.map((p) => p.moduleId));
 
   return (
@@ -65,6 +79,7 @@ export default async function DashboardPage() {
                   completedSet.has(m.id),
                 ).length;
                 const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+                const isComplete = total > 0 && done === total;
                 return (
                   <Link
                     key={program.id}
@@ -93,11 +108,62 @@ export default async function DashboardPage() {
                         style={{ width: `${pct}%` }}
                       />
                     </div>
+
+                    {isComplete ? (
+                      <div className="mt-5 flex items-center gap-2 rounded-sm bg-success-bg px-3 py-2 text-xs">
+                        <Award className="h-3.5 w-3.5 text-success" />
+                        <span className="font-mono uppercase tracking-widest text-success">
+                          Certificate ready
+                        </span>
+                        <a
+                          href={`/api/certificates/${program.id}/pdf`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="ml-auto font-mono text-[10px] uppercase tracking-widest text-gold underline-offset-4 hover:underline"
+                        >
+                          Download →
+                        </a>
+                      </div>
+                    ) : null}
                   </Link>
                 );
               })}
             </div>
           )}
+
+          {bookmarks.length > 0 ? (
+            <div className="mt-16">
+              <div className="mb-4 flex items-center gap-2">
+                <BookmarkCheck className="h-4 w-4 text-gold" />
+                <h2 className="label-mono">Saved for later</h2>
+              </div>
+              <ul className="divide-y divide-line border-y border-line">
+                {bookmarks.map((b) => (
+                  <li key={b.id}>
+                    <Link
+                      href={`/programs/${b.module.program.slug}/modules/${b.module.position}`}
+                      className="flex items-center justify-between py-4 transition-colors hover:bg-cream-deep/50"
+                    >
+                      <div className="min-w-0">
+                        <p className="heading-serif text-xl text-navy">
+                          Module {b.module.number} — {b.module.title}
+                        </p>
+                        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-widest text-muted">
+                          {b.module.program.title}
+                        </p>
+                      </div>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                        Saved{" "}
+                        {b.createdAt.toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </section>
       </main>
     </>

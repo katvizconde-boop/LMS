@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { SignOutButton } from "./SignOutButton";
 
@@ -35,6 +36,15 @@ export async function TopBar({ context = null }: Props) {
           </div>
         ) : null}
         <nav className="flex shrink-0 items-center gap-4 sm:gap-5">
+          {session ? (
+            <Link
+              href="/search"
+              aria-label="Search"
+              className="text-cream/80 hover:text-gold"
+            >
+              <Search className="h-4 w-4" />
+            </Link>
+          ) : null}
           {showManagerNav ? (
             <>
               <Link

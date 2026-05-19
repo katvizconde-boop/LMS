@@ -11,6 +11,7 @@ import { KnowledgeCheckSection } from "@/components/module/KnowledgeCheckSection
 import { ExerciseSection } from "@/components/module/ExerciseSection";
 import { CompleteSection } from "@/components/module/CompleteSection";
 import { NextModule } from "@/components/module/NextModule";
+import { BookmarkButton } from "@/components/module/BookmarkButton";
 
 type Params = { slug: string; position: string };
 
@@ -74,35 +75,40 @@ export default async function ModulePage({
   });
 
   // Hydration data for client interactions.
-  const [quizAnswers, moduleProgress, latestSubmission] = await Promise.all([
-    mod.quizzes.length > 0
-      ? db.quizAnswer.findMany({
-          where: {
-            userId: session.user.id,
-            quizId: { in: mod.quizzes.map((q) => q.id) },
-          },
-          select: { quizId: true, choiceIndex: true },
-        })
-      : Promise.resolve([] as { quizId: string; choiceIndex: number }[]),
-    db.moduleProgress.findUnique({
-      where: { userId_moduleId: { userId: session.user.id, moduleId: mod.id } },
-      select: { completedAt: true },
-    }),
-    mod.exercise
-      ? db.submission.findFirst({
-          where: { userId: session.user.id, moduleId: mod.id },
-          orderBy: { submittedAt: "desc" },
-          select: {
-            id: true,
-            content: true,
-            status: true,
-            reviewerNotes: true,
-            submittedAt: true,
-            reviewedAt: true,
-          },
-        })
-      : Promise.resolve(null),
-  ]);
+  const [quizAnswers, moduleProgress, latestSubmission, bookmark] =
+    await Promise.all([
+      mod.quizzes.length > 0
+        ? db.quizAnswer.findMany({
+            where: {
+              userId: session.user.id,
+              quizId: { in: mod.quizzes.map((q) => q.id) },
+            },
+            select: { quizId: true, choiceIndex: true },
+          })
+        : Promise.resolve([] as { quizId: string; choiceIndex: number }[]),
+      db.moduleProgress.findUnique({
+        where: { userId_moduleId: { userId: session.user.id, moduleId: mod.id } },
+        select: { completedAt: true },
+      }),
+      mod.exercise
+        ? db.submission.findFirst({
+            where: { userId: session.user.id, moduleId: mod.id },
+            orderBy: { submittedAt: "desc" },
+            select: {
+              id: true,
+              content: true,
+              status: true,
+              reviewerNotes: true,
+              submittedAt: true,
+              reviewedAt: true,
+            },
+          })
+        : Promise.resolve(null),
+      db.bookmark.findUnique({
+        where: { userId_moduleId: { userId: session.user.id, moduleId: mod.id } },
+        select: { id: true },
+      }),
+    ]);
   const priorChoiceByQuiz = new Map(
     quizAnswers.map((a) => [a.quizId, a.choiceIndex]),
   );
@@ -149,6 +155,9 @@ export default async function ModulePage({
           heroSubtitle={mod.heroSubtitle}
           durationMinutes={mod.durationMinutes}
           audienceLabel={mod.audienceLabel}
+          rightSlot={
+            <BookmarkButton moduleId={mod.id} bookmarked={!!bookmark} />
+          }
         />
 
         {/* Objectives intro block is part of the first section group already if seeded so.

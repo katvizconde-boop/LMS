@@ -12,7 +12,7 @@ A self-paced, web-based Learning Management System (LMS) for the Seven Generatio
 | 4 | Admin dashboard, users CRUD, programs CRUD, module metadata CRUD, enrollment mgmt, CSV export | ✓ |
 | 4.5 | Section composer (per-type forms), quiz CRUD, exercise CRUD, up/down reorder | ✓ |
 | 5 | Submission email notifications, responsive TopBar, deploy docs | ✓ (partial — see "Not yet" below) |
-| 6 | Completion certificates, bookmarking, search | not started |
+| 6 | Completion certificates (PDF), bookmarking, module search | ✓ |
 
 ## Tech stack
 
@@ -142,7 +142,6 @@ npm run db:studio       # browse the DB visually
 - **Module unlock + submission reminder emails** — would need a cron job (Vercel cron / external scheduler) to scan daily for newly-unlocked modules and overdue submissions; deferred since the free tier has no cron.
 - **Section view tracking** — schema is ready (`SectionView` table + `recordSectionView` action), no IntersectionObserver wired yet.
 - **Audience rule materialization** — `Program.audienceRules` JSON is stored but the evaluator that turns rules into enrollments isn't built; admins currently enroll by individual or by entity/role bulk.
-- **Completion certificates, bookmarking, in-module search** — Phase 6 wishlist from the brief.
 
 ## Email setup
 
