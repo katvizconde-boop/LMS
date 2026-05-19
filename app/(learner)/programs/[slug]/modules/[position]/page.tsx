@@ -55,8 +55,9 @@ export default async function ModulePage({
   });
   if (!mod) notFound();
 
-  // Lock check
-  if (mod.availableFrom && mod.availableFrom > new Date()) {
+  // Lock check — admins can preview locked modules.
+  const isLocked = !!(mod.availableFrom && mod.availableFrom > new Date());
+  if (isLocked && session.user.role !== "ADMIN") {
     redirect(`/programs/${slug}`);
   }
 

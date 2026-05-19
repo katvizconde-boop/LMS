@@ -54,13 +54,15 @@ Getting a Neon URL takes a minute:
 3. Copy the **pooled** connection string (already includes `?sslmode=require`)
 4. Paste into `DATABASE_URL`
 
-### 3. Migrate the database
+### 3. Apply the schema
 
 ```powershell
-npm run db:migrate
+npm run db:apply-init
 ```
 
-Creates the schema in your Neon database and stamps a migration in `prisma/migrations/`.
+Pushes the bundled `prisma/init.sql` to Neon over HTTPS (port 443) using `@neondatabase/serverless`.
+
+> **Why `db:apply-init` instead of `db:migrate`?** Many Philippine ISPs block outbound port 5432, which `prisma migrate` requires. Neon's WebSocket adapter routes everything through HTTPS, so it works on any network. If your network *does* allow 5432, run `npm run db:migrate` instead — it tracks migrations in a `_prisma_migrations` table for proper schema evolution. The `db:diff` script regenerates `prisma/init.sql` whenever `schema.prisma` changes.
 
 ### 4. Seed it
 
@@ -125,12 +127,14 @@ types/
 ## Useful commands
 
 ```powershell
-npm run dev           # Next.js dev server
-npm run typecheck     # tsc --noEmit
-npm run db:migrate    # create/apply migrations
-npm run db:seed       # rebuild seeded content
-npm run db:reset      # wipe + re-migrate + re-seed (DANGER in prod)
-npm run db:studio     # browse the DB visually
+npm run dev             # Next.js dev server
+npm run typecheck       # tsc --noEmit
+npm run db:apply-init   # apply prisma/init.sql via HTTPS (works on networks that block 5432)
+npm run db:diff         # regenerate prisma/init.sql from current schema (no DB connection)
+npm run db:migrate      # standard Prisma migrations (requires port 5432)
+npm run db:seed         # rebuild seeded content
+npm run db:reset        # wipe + re-migrate + re-seed (DANGER in prod)
+npm run db:studio       # browse the DB visually
 ```
 
 ## What's NOT in Phase 1 (planned)
@@ -156,6 +160,8 @@ See the phase plan in the project brief.
 - **Allowlist sign-in** — `lib/auth.ts` blocks sign-ins for emails not pre-provisioned in the `User` table. Admins add users via seed or (later) the admin UI.
 - **Polymorphic Section blocks** — `Section.type` (enum) + `Section.content` (JSON). One Section row holds one block; the renderer groups consecutive rows under one logical heading (only the first carries `number`/`title`).
 - **Relational progress tracking** — `ModuleProgress`, `SectionView`, `QuizAnswer` are separate tables (not JSON arrays on one `ProgressRecord`) so analytics queries stay simple.
+- **Neon HTTPS adapter** — all Postgres traffic goes through `@neondatabase/serverless` over WebSocket on port 443, bypassing ISPs that block raw Postgres on 5432.
+- **Admin preview** — users with `role = ADMIN` can open modules whose `availableFrom` is still in the future. Useful for content review before a program goes live.
 
 ## Deploying
 

@@ -106,6 +106,7 @@ export default async function ProgramPage({
             {program.modules.map((m) => {
               const locked = m.availableFrom ? m.availableFrom > now : false;
               const done = completedSet.has(m.id);
+              const canBypass = session.user.role === "ADMIN";
               return (
                 <li key={m.id}>
                   <ModuleRow
@@ -118,6 +119,7 @@ export default async function ProgramPage({
                     locked={locked}
                     done={done}
                     availableFrom={m.availableFrom}
+                    canBypassLock={canBypass}
                   />
                 </li>
               );
@@ -150,6 +152,7 @@ function ModuleRow({
   locked,
   done,
   availableFrom,
+  canBypassLock,
 }: {
   href: string;
   number: string;
@@ -160,6 +163,7 @@ function ModuleRow({
   locked: boolean;
   done: boolean;
   availableFrom: Date | null;
+  canBypassLock: boolean;
 }) {
   const inner = (
     <div className="flex items-center gap-6 py-6">
@@ -187,11 +191,11 @@ function ModuleRow({
           ) : null}
         </div>
       </div>
-      {!locked ? <ArrowRight className="h-4 w-4 text-muted" /> : null}
+      {!locked || canBypassLock ? <ArrowRight className="h-4 w-4 text-muted" /> : null}
     </div>
   );
 
-  if (locked) {
+  if (locked && !canBypassLock) {
     return <div className="opacity-50 cursor-not-allowed">{inner}</div>;
   }
   return (

@@ -12,7 +12,9 @@
  * Idempotent — uses upserts keyed on stable natural keys.
  */
 
+import "dotenv/config";
 import { PrismaClient, ModuleLevel, UserRole, SectionType } from "@prisma/client";
+import { PrismaNeon } from "@prisma/adapter-neon";
 import type {
   ComparisonContent,
   ExampleCardContent,
@@ -22,11 +24,14 @@ import type {
   TryItContent,
 } from "../lib/section-content";
 
-const db = new PrismaClient();
-
 const ADMIN_EMAIL = "kat.vizconde@seven-gen.com";
 
 async function main() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not set (check .env in lms-app/)");
+  }
+  const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL });
+  const db = new PrismaClient({ adapter });
   // ============ ENTITIES ============
   const [m2, mmi, rdb, sg] = await Promise.all([
     db.entity.upsert({
@@ -465,12 +470,7 @@ function module01Quizzes() {
   ];
 }
 
-main()
-  .then(async () => {
-    await db.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await db.$disconnect();
-    process.exit(1);
-  });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
