@@ -16,7 +16,8 @@ type SendArgs = {
 
 export async function sendEmail({ to, subject, html, text }: SendArgs): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM ?? "onboarding@resend.dev";
+  // Use || not ?? — empty-string env var should fall through to the default.
+  const from = process.env.EMAIL_FROM || "onboarding@resend.dev";
 
   if (!apiKey) {
     const banner = "-".repeat(72);
@@ -28,17 +29,31 @@ export async function sendEmail({ to, subject, html, text }: SendArgs): Promise<
     return;
   }
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ from, to, subject, html, text }),
-  });
+  let res: Response;
+  try {
+    res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from, to, subject, html, text }),
+    });
+  } catch (e) {
+    console.error(
+      "[email/sender] fetch to Resend threw:",
+      e instanceof Error ? e.message : e,
+    );
+    throw e;
+  }
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");
+    console.error(
+      `[email/sender] Resend ${res.status} ${res.statusText} — from=${from} to=${
+        Array.isArray(to) ? to.join(",") : to
+      } body=${body}`,
+    );
     throw new Error(`Resend send failed (${res.status}): ${body}`);
   }
 }
