@@ -1,8 +1,9 @@
 /**
- * Magic-link email template + sender.
- * If RESEND_API_KEY is unset, we log the link to console (dev mode).
- * Otherwise we POST to Resend's HTTPS API directly (no SDK required).
+ * Magic-link email template.
+ * Special-cased from the rest of email infra so the link is loud in dev logs.
  */
+
+import { sendEmail } from "./sender";
 
 type SendArgs = {
   to: string;
@@ -20,27 +21,12 @@ export async function sendMagicLink({ to, url }: SendArgs): Promise<void> {
     return;
   }
 
-  const from = process.env.EMAIL_FROM ?? "onboarding@resend.dev";
-
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to,
-      subject: "Your Seven Generation Learning sign-in link",
-      html: renderHtml(url),
-      text: renderText(url),
-    }),
+  await sendEmail({
+    to,
+    subject: "Your Seven Generation Learning sign-in link",
+    html: renderHtml(url),
+    text: renderText(url),
   });
-
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`Resend send failed (${res.status}): ${body}`);
-  }
 }
 
 function renderHtml(url: string): string {

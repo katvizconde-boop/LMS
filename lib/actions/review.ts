@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { notifySubmissionReviewed } from "@/lib/email/notifications";
 
 type Result = { ok: true } | { ok: false; error: string };
 
@@ -62,6 +63,10 @@ export async function approveSubmission(submissionId: string): Promise<Result> {
   revalidatePath("/reviews");
   revalidatePath("/team");
   revalidatePath(`/programs/[slug]/modules/[position]`, "page");
+
+  notifySubmissionReviewed(submissionId, "APPROVED").catch((e) =>
+    console.error("notifySubmissionReviewed failed:", e),
+  );
   return { ok: true };
 }
 
@@ -93,5 +98,9 @@ export async function requestRevision(
   revalidatePath("/reviews");
   revalidatePath("/team");
   revalidatePath(`/programs/[slug]/modules/[position]`, "page");
+
+  notifySubmissionReviewed(submissionId, "REVISION_REQUESTED").catch((e) =>
+    console.error("notifySubmissionReviewed failed:", e),
+  );
   return { ok: true };
 }

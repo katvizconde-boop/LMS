@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { ModuleForm } from "@/components/admin/ModuleForm";
 import { ModuleDeleteButton } from "@/components/admin/ModuleDeleteButton";
+import { SectionList } from "@/components/admin/SectionList";
+import { QuizList } from "@/components/admin/QuizList";
+import { ExerciseEditor } from "@/components/admin/ExerciseEditor";
 
 type Params = { id: string; mid: string };
 
@@ -72,40 +75,59 @@ export default async function EditModulePage({
 
         <div>
           <h2 className="label-mono mb-3">
-            Content · {mod.sections.length} sections, {mod.quizzes.length}{" "}
-            quizzes, {mod.exercise ? "1 exercise" : "no exercise"}
+            Sections · {mod.sections.length}
           </h2>
-          <div className="rounded border border-dashed border-line bg-cream-deep p-6">
-            <p className="text-sm text-navy-soft">
-              The per-block section composer (TEXT / OBJECTIVES_BOX / COMPARISON
-              / TRY_IT / etc.) ships in <strong>Phase 4.5</strong>. For now,
-              edit section content, quizzes, and the exercise directly in
-              Prisma Studio:
-            </p>
-            <pre className="mt-3 inline-block rounded-sm border border-line bg-white px-3 py-1.5 font-mono text-xs text-navy">
-              npm run db:studio
-            </pre>
-            {mod.sections.length > 0 ? (
-              <ul className="mt-5 flex flex-col gap-1.5 text-sm">
-                {mod.sections.map((s) => (
-                  <li
-                    key={s.id}
-                    className="flex items-center justify-between border-b border-line/60 pb-1.5"
-                  >
-                    <span>
-                      <span className="font-mono text-xs text-muted">
-                        #{s.position}
-                      </span>{" "}
-                      <span className="font-mono text-xs text-gold">
-                        {s.type}
-                      </span>{" "}
-                      {s.title ?? s.number ?? ""}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
+          <SectionList
+            moduleId={mod.id}
+            sections={mod.sections.map((s) => ({
+              id: s.id,
+              position: s.position,
+              type: s.type,
+              number: s.number,
+              title: s.title,
+              content: s.content,
+            }))}
+          />
+        </div>
+
+        <div>
+          <h2 className="label-mono mb-3">
+            Knowledge check · {mod.quizzes.length}{" "}
+            {mod.quizzes.length === 1 ? "quiz" : "quizzes"}
+          </h2>
+          <QuizList
+            moduleId={mod.id}
+            quizzes={mod.quizzes.map((q) => ({
+              id: q.id,
+              position: q.position,
+              question: q.question,
+              options: q.options as string[],
+              correctIndex: q.correctIndex,
+              feedback: q.feedback,
+            }))}
+          />
+        </div>
+
+        <div>
+          <h2 className="label-mono mb-3">
+            Exercise {mod.exercise ? "" : "(none yet)"}
+          </h2>
+          <ExerciseEditor
+            moduleId={mod.id}
+            exercise={
+              mod.exercise
+                ? {
+                    title: mod.exercise.title,
+                    instructions: mod.exercise.instructions as {
+                      intro?: string;
+                      steps: string[];
+                      deadlineNote?: string;
+                    },
+                    deadlineOffsetDays: mod.exercise.deadlineOffsetDays,
+                  }
+                : null
+            }
+          />
         </div>
       </section>
     </main>

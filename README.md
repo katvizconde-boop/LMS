@@ -2,17 +2,17 @@
 
 A self-paced, web-based Learning Management System (LMS) for the Seven Generation Group. Multi-program platform — the first program shipping is **Claude at Work** (June–December 2026); the platform supports many programs running in parallel or sequentially.
 
-## Status — Phase 1 (Foundation)
+## Status
 
-| ✓   | Acceptance criterion                                                                  |
-|-----|----------------------------------------------------------------------------------------|
-| ✓   | Magic-link login (Resend in prod, console log in dev — no API key required to start)  |
-| ✓   | Learner dashboard listing enrolled programs                                            |
-| ✓   | Program detail page with module list                                                   |
-| ✓   | Module viewer rendering all sections, quizzes, and exercise from DB                    |
-| ✓   | Visual style ports the reference HTML at `OneDrive/LMS/Module-01-Meet-Claude.html`    |
-
-Phase 2+ (interactive progress persistence, manager review, admin composer) is **not yet implemented** — see project brief.
+| Phase | Scope | State |
+|---|---|---|
+| 1 | Magic-link login, learner dashboard, program + module viewer (reference HTML ported) | ✓ |
+| 2 | Quiz answer persistence, module completion persistence, exercise submission flow | ✓ |
+| 3 | Manager scope, `/team`, `/reviews` queue with approve / request revision | ✓ |
+| 4 | Admin dashboard, users CRUD, programs CRUD, module metadata CRUD, enrollment mgmt, CSV export | ✓ |
+| 4.5 | Section composer (per-type forms), quiz CRUD, exercise CRUD, up/down reorder | ✓ |
+| 5 | Submission email notifications, responsive TopBar, deploy docs | ✓ (partial — see "Not yet" below) |
+| 6 | Completion certificates, bookmarking, search | not started |
 
 ## Tech stack
 
@@ -137,21 +137,19 @@ npm run db:reset        # wipe + re-migrate + re-seed (DANGER in prod)
 npm run db:studio       # browse the DB visually
 ```
 
-## What's NOT in Phase 1 (planned)
+## Not yet built
 
-Per the project brief, these are deliberately deferred:
+- **Module unlock + submission reminder emails** — would need a cron job (Vercel cron / external scheduler) to scan daily for newly-unlocked modules and overdue submissions; deferred since the free tier has no cron.
+- **Section view tracking** — schema is ready (`SectionView` table + `recordSectionView` action), no IntersectionObserver wired yet.
+- **Audience rule materialization** — `Program.audienceRules` JSON is stored but the evaluator that turns rules into enrollments isn't built; admins currently enroll by individual or by entity/role bulk.
+- **Completion certificates, bookmarking, in-module search** — Phase 6 wishlist from the brief.
 
-- Quiz answer persistence (currently client-state only)
-- Section view tracking (`SectionView` table is in schema, no writes yet)
-- Module completion persistence (`Mark complete` is client-state only)
-- Exercise submission + manager review queue
-- Admin program/module composer UI
-- Admin user + enrollment management
-- Email notifications beyond magic links
-- Audience rule materialization (`audienceRules` JSON is stored; evaluator not built)
-- CSV export
+## Email setup
 
-See the phase plan in the project brief.
+- Magic-link emails: handled by [`lib/email/magic-link.ts`](lib/email/magic-link.ts).
+- Submission lifecycle: [`lib/email/notifications.ts`](lib/email/notifications.ts) — sent on submit (→ manager) and on review decision (→ learner).
+- Without `RESEND_API_KEY`, every send falls back to a console log. Useful for dev.
+- For production, set `RESEND_API_KEY` and a verified `EMAIL_FROM` domain in Resend. The free tier (100/day, 3000/month) is enough for ~200 learners at expected volume.
 
 ## Stack notes / decisions
 
@@ -163,11 +161,31 @@ See the phase plan in the project brief.
 - **Neon HTTPS adapter** — all Postgres traffic goes through `@neondatabase/serverless` over WebSocket on port 443, bypassing ISPs that block raw Postgres on 5432.
 - **Admin preview** — users with `role = ADMIN` can open modules whose `availableFrom` is still in the future. Useful for content review before a program goes live.
 
-## Deploying
+## Deploying to Vercel
 
-Not in Phase 1 scope. When ready:
+The app is a standard Next.js 16 deploy. Step by step:
 
-1. Create a Vercel project pointing at this repo
-2. Set the same env vars in Vercel (DATABASE_URL pointing to production Neon, real `AUTH_SECRET`, real `RESEND_API_KEY`, verified `EMAIL_FROM` domain)
-3. `npm run db:migrate` once against the production DB
-4. (Optional) `npm run db:seed` against production for entities + first admin only
+1. **Push to GitHub.** Create a private repo and push the local `main` branch.
+2. **Create a Vercel project** pointing at the repo. Framework auto-detects as Next.js.
+3. **Set environment variables** in Vercel project settings:
+   ```
+   DATABASE_URL         = <production Neon pooled URL>
+   AUTH_SECRET          = <fresh 32-byte random — do NOT reuse the dev secret>
+   RESEND_API_KEY       = <production Resend API key>
+   EMAIL_FROM           = noreply@your-verified-domain.com
+   NEXTAUTH_URL         = https://your-vercel-domain.vercel.app
+   ```
+4. **Apply the schema** against the production Neon DB:
+   ```powershell
+   $env:DATABASE_URL="<production URL>"; npm run db:apply-init
+   ```
+   (Or `npm run db:migrate` if your network allows port 5432.)
+5. **Seed entities + first admin only** (skip the demo manager/employee/submission):
+   ```powershell
+   $env:DATABASE_URL="<production URL>"; npm run db:seed
+   ```
+   Then edit the seeded admin user if needed, or invite via `/admin/users` once logged in.
+6. **First deploy.** Vercel will build and surface the URL.
+7. **Verify Resend deliverability.** Send yourself a magic link from the deployed login page; confirm it arrives.
+
+**Vercel Hobby ToS note:** Strictly non-commercial. Acceptable in practice for ~200 internal users but consider Vercel Pro before going company-wide, or self-host on Render/Fly free tier as an alternative — Next.js 16 + Neon HTTPS works fine on those too.

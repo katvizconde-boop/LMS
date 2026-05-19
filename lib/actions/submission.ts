@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireEnrolledInModule } from "./util";
 import { db } from "@/lib/db";
+import { notifySubmissionReceived } from "@/lib/email/notifications";
 
 type Result =
   | { ok: true; submissionId: string }
@@ -40,6 +41,12 @@ export async function submitExercise(
 
   revalidatePath(`/programs/[slug]/modules/[position]`, "page");
   revalidatePath("/submissions");
+  revalidatePath("/reviews");
+
+  // Fire-and-forget — manager email shouldn't block the learner's flow.
+  notifySubmissionReceived(submission.id).catch((e) =>
+    console.error("notifySubmissionReceived failed:", e),
+  );
 
   return { ok: true, submissionId: submission.id };
 }
