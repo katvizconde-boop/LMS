@@ -10,6 +10,7 @@ export async function TopBar({ context = null }: Props) {
   const session = await auth();
   const role = session?.user?.role;
   const showManagerNav = role === "MANAGER" || role === "ADMIN";
+  const showAdminNav = role === "ADMIN";
 
   return (
     <div className="sticky top-0 z-40 border-b border-gold/40 bg-navy text-cream">
@@ -44,6 +45,14 @@ export async function TopBar({ context = null }: Props) {
                 Reviews
               </Link>
             </>
+          ) : null}
+          {showAdminNav ? (
+            <Link
+              href="/admin/dashboard"
+              className="font-mono text-[11px] uppercase tracking-widest text-gold hover:opacity-90"
+            >
+              Admin
+            </Link>
           ) : null}
           <SignOutButton />
         </nav>
