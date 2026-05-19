@@ -56,7 +56,8 @@ async function main() {
     }),
   ]);
 
-  // ============ ADMIN USER ============
+  // ============ USERS ============
+  // Admin (you)
   const admin = await db.user.upsert({
     where: { email: ADMIN_EMAIL },
     create: {
@@ -66,6 +67,43 @@ async function main() {
       entityId: sg.id,
     },
     update: { role: UserRole.ADMIN, name: "Kat Vizconde" },
+  });
+
+  // Demo manager — for testing the manager flow.
+  const demoManager = await db.user.upsert({
+    where: { email: "manager.demo@seven-gen.com" },
+    create: {
+      email: "manager.demo@seven-gen.com",
+      name: "Maria Santos",
+      role: UserRole.MANAGER,
+      entityId: m2.id,
+    },
+    update: { role: UserRole.MANAGER },
+  });
+
+  // Demo employees reporting to demoManager.
+  const demoEmployee1 = await db.user.upsert({
+    where: { email: "employee.demo@seven-gen.com" },
+    create: {
+      email: "employee.demo@seven-gen.com",
+      name: "Jasmine Reyes",
+      role: UserRole.EMPLOYEE,
+      entityId: m2.id,
+      managerId: demoManager.id,
+    },
+    update: { managerId: demoManager.id },
+  });
+
+  const demoEmployee2 = await db.user.upsert({
+    where: { email: "employee2.demo@seven-gen.com" },
+    create: {
+      email: "employee2.demo@seven-gen.com",
+      name: "Mark Cruz",
+      role: UserRole.EMPLOYEE,
+      entityId: mmi.id,
+      managerId: demoManager.id,
+    },
+    update: { managerId: demoManager.id },
   });
 
   // ============ PROGRAM: Claude at Work ============
@@ -89,11 +127,14 @@ async function main() {
     update: {},
   });
 
-  await db.enrollment.upsert({
-    where: { userId_programId: { userId: admin.id, programId: program.id } },
-    create: { userId: admin.id, programId: program.id },
-    update: {},
-  });
+  // Enroll admin + demo manager + demo employees in Claude at Work.
+  for (const u of [admin, demoManager, demoEmployee1, demoEmployee2]) {
+    await db.enrollment.upsert({
+      where: { userId_programId: { userId: u.id, programId: program.id } },
+      create: { userId: u.id, programId: program.id },
+      update: {},
+    });
+  }
 
   // ============ MODULE 01: Meet Claude ============
   await db.module.deleteMany({ where: { programId: program.id, position: 1 } });
@@ -164,9 +205,29 @@ async function main() {
     update: {},
   });
 
+  // ============ DEMO SUBMISSION (for testing manager review flow) ============
+  // Jasmine (demoEmployee1) submits a reflection so Maria has something to review.
+  await db.submission.deleteMany({
+    where: {
+      userId: demoEmployee1.id,
+      moduleId: mod1.id,
+    },
+  });
+  await db.submission.create({
+    data: {
+      userId: demoEmployee1.id,
+      moduleId: mod1.id,
+      content:
+        "I used Claude to help summarize a long client brief and pull out the top 3 priorities. It got the structure right, but missed two nuances the client had emphasized verbally — so I'd add a note about that context in the prompt next time. Quick win overall.",
+      status: "PENDING",
+    },
+  });
+
   console.log("");
   console.log("✓ Entities  :", [m2.code, mmi.code, rdb.code, sg.code].join(", "));
   console.log("✓ Admin     :", admin.email, `(${admin.role})`);
+  console.log("✓ Manager   :", demoManager.email, `(${demoManager.role})`);
+  console.log("✓ Employees :", demoEmployee1.email + ",", demoEmployee2.email);
   console.log("✓ Program   :", program.title, `[${program.slug}]`);
   console.log("✓ Module 01 :", mod1.title, `(${mod1.position})`);
   console.log("");

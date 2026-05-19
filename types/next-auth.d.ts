@@ -7,7 +7,7 @@ declare module "next-auth" {
       id: string;
       role: UserRole;
       entityId: string | null;
-    } & DefaultSession["user"];
+    } & NonNullable<DefaultSession["user"]>;
   }
 }
 
