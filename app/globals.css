@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Seven Generation Learning — design tokens
+   Editorial premium feel — navy + gold + cream.
+   ============================================================ */
+@theme {
+  --color-navy: #1a2332;
+  --color-navy-soft: #2a3548;
+  --color-navy-deep: #0f1620;
+  --color-gold: #b8943f;
+  --color-gold-soft: #d4b66a;
+  --color-cream: #faf6ef;
+  --color-cream-deep: #f0eadd;
+  --color-line: #e5dfd0;
+  --color-ink: #1a2332;
+  --color-muted: #6b7280;
+  --color-success: #4a7c59;
+  --color-success-bg: #f2f7f3;
+  --color-success-border: #c5d9cb;
+  --color-danger: #a03a3a;
+  --color-danger-bg: #fdf4f4;
+  --color-danger-border: #e8c5c5;
+
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
+  --font-serif: var(--font-dm-serif), Georgia, serif;
+
+  --tracking-mono: 0.18em;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility: monospace label (recurring pattern from reference) */
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+/* Utility: editorial heading */
+.heading-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+/* Prose styles inside section TEXT blocks */
+.prose-editorial p {
+  font-size: 17px;
+  color: var(--color-navy-soft);
+  margin-bottom: 18px;
+  line-height: 1.7;
+}
+.prose-editorial p:last-child {
+  margin-bottom: 0;
+}
+.prose-editorial strong {
+  color: var(--color-navy);
+  font-weight: 600;
+}
