@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { UserRow } from "@/components/admin/UserRow";
 import { AddUserForm } from "@/components/admin/AddUserForm";
@@ -6,7 +6,7 @@ import { AddUserForm } from "@/components/admin/AddUserForm";
 export const metadata = { title: "Users — Admin" };
 
 export default async function UsersPage() {
-  const session = (await auth())!;
+  const session = await requireSession();
   const [users, entities] = await Promise.all([
     db.user.findMany({
       orderBy: [{ role: "asc" }, { name: "asc" }, { email: "asc" }],

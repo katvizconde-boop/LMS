@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { getReviewableSubmissions } from "@/lib/manager";
 import { TopBar } from "@/components/learner/TopBar";
 import { ReviewCard } from "@/components/manager/ReviewCard";
@@ -6,7 +6,7 @@ import { ReviewCard } from "@/components/manager/ReviewCard";
 export const metadata = { title: "Reviews — Seven Generation Learning" };
 
 export default async function ReviewsPage() {
-  const session = (await auth())!;
+  const session = await requireSession();
   const submissions = await getReviewableSubmissions(
     session.user.id,
     session.user.role,

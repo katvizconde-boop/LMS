@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { searchForUser } from "@/lib/search";
 import { TopBar } from "@/components/learner/TopBar";
 
@@ -10,7 +10,7 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const session = (await auth())!;
+  const session = await requireSession();
   const { q = "" } = await searchParams;
   const trimmed = q.trim();
   const hits = trimmed

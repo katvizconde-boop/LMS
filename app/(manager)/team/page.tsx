@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { getScopedReports } from "@/lib/manager";
 import { TopBar } from "@/components/learner/TopBar";
@@ -7,7 +7,7 @@ import { TopBar } from "@/components/learner/TopBar";
 export const metadata = { title: "Team — Seven Generation Learning" };
 
 export default async function TeamPage() {
-  const session = (await auth())!;
+  const session = await requireSession();
   const reports = await getScopedReports(session.user.id, session.user.role);
 
   // Aggregate completion stats per user in one pass.

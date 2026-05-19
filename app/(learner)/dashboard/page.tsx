@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { TopBar } from "@/components/learner/TopBar";
 import { BookmarkCheck, Award } from "lucide-react";
@@ -7,7 +7,7 @@ import { BookmarkCheck, Award } from "lucide-react";
 export const metadata = { title: "Dashboard — Seven Generation Learning" };
 
 export default async function DashboardPage() {
-  const session = (await auth())!;
+  const session = await requireSession();
   const userId = session.user.id;
 
   const enrollments = await db.enrollment.findMany({

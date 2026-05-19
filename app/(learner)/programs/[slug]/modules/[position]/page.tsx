@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { TopBar } from "@/components/learner/TopBar";
 import { ModuleHero } from "@/components/module/ModuleHero";
@@ -32,7 +32,7 @@ export default async function ModulePage({
 }: {
   params: Promise<Params>;
 }) {
-  const session = (await auth())!;
+  const session = await requireSession();
   const { slug, position: positionRaw } = await params;
   const position = Number(positionRaw);
   if (!Number.isFinite(position)) notFound();

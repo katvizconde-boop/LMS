@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { requireSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { TopBar } from "@/components/learner/TopBar";
 import { Lock, Check, ArrowRight } from "lucide-react";
@@ -21,7 +21,7 @@ export default async function ProgramPage({
 }: {
   params: Promise<Params>;
 }) {
-  const session = (await auth())!;
+  const session = await requireSession();
   const { slug } = await params;
 
   const program = await db.program.findUnique({
