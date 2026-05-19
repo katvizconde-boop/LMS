@@ -81,50 +81,55 @@ export default async function DashboardPage() {
                 const pct = total === 0 ? 0 : Math.round((done / total) * 100);
                 const isComplete = total > 0 && done === total;
                 return (
-                  <Link
+                  <div
                     key={program.id}
-                    href={`/programs/${program.slug}`}
-                    className="group block rounded border border-line bg-white p-7 shadow-[0_2px_12px_rgba(26,35,50,0.04)] transition-shadow hover:shadow-[0_4px_20px_rgba(26,35,50,0.08)]"
+                    className="group flex flex-col overflow-hidden rounded border border-line bg-white shadow-[0_2px_12px_rgba(26,35,50,0.04)] transition-shadow hover:shadow-[0_4px_20px_rgba(26,35,50,0.08)]"
                   >
-                    <div className="label-mono mb-3">Program</div>
-                    <h2 className="heading-serif text-3xl text-navy group-hover:text-navy-soft">
-                      {program.title}
-                    </h2>
-                    {program.subtitle ? (
-                      <p className="mt-3 text-sm text-muted">{program.subtitle}</p>
-                    ) : null}
+                    <Link
+                      href={`/programs/${program.slug}`}
+                      className="flex-1 p-7"
+                    >
+                      <div className="label-mono mb-3">Program</div>
+                      <h2 className="heading-serif text-3xl text-navy group-hover:text-navy-soft">
+                        {program.title}
+                      </h2>
+                      {program.subtitle ? (
+                        <p className="mt-3 text-sm text-muted">
+                          {program.subtitle}
+                        </p>
+                      ) : null}
 
-                    <div className="mt-6 flex items-center justify-between text-xs">
-                      <span className="font-mono uppercase tracking-widest text-muted">
-                        {done}/{total} modules
-                      </span>
-                      <span className="font-mono uppercase tracking-widest text-gold">
-                        {pct}%
-                      </span>
-                    </div>
-                    <div className="mt-2 h-1 w-full overflow-hidden rounded-sm bg-cream-deep">
-                      <div
-                        className="h-full bg-gold transition-[width]"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
+                      <div className="mt-6 flex items-center justify-between text-xs">
+                        <span className="font-mono uppercase tracking-widest text-muted">
+                          {done}/{total} modules
+                        </span>
+                        <span className="font-mono uppercase tracking-widest text-gold">
+                          {pct}%
+                        </span>
+                      </div>
+                      <div className="mt-2 h-1 w-full overflow-hidden rounded-sm bg-cream-deep">
+                        <div
+                          className="h-full bg-gold transition-[width]"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </Link>
 
                     {isComplete ? (
-                      <div className="mt-5 flex items-center gap-2 rounded-sm bg-success-bg px-3 py-2 text-xs">
+                      <a
+                        href={`/api/certificates/${program.id}/pdf`}
+                        className="flex items-center gap-2 border-t border-success-border bg-success-bg px-5 py-3 text-xs transition-colors hover:bg-success-bg/70"
+                      >
                         <Award className="h-3.5 w-3.5 text-success" />
                         <span className="font-mono uppercase tracking-widest text-success">
                           Certificate ready
                         </span>
-                        <a
-                          href={`/api/certificates/${program.id}/pdf`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="ml-auto font-mono text-[10px] uppercase tracking-widest text-gold underline-offset-4 hover:underline"
-                        >
+                        <span className="ml-auto font-mono text-[10px] uppercase tracking-widest text-gold underline-offset-4 group-hover:underline">
                           Download →
-                        </a>
-                      </div>
+                        </span>
+                      </a>
                     ) : null}
-                  </Link>
+                  </div>
                 );
               })}
             </div>
