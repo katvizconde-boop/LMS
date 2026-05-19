@@ -6,6 +6,7 @@ type Quiz = {
   options: string[];
   correctIndex: number;
   feedback: string;
+  priorChoice: number | null;
 };
 
 type Props = {
@@ -28,10 +29,12 @@ export function KnowledgeCheckSection({ number, quizzes }: Props) {
         {quizzes.map((q) => (
           <QuizBlock
             key={q.id}
+            quizId={q.id}
             question={q.question}
             options={q.options}
             correctIndex={q.correctIndex}
             feedback={q.feedback}
+            priorChoice={q.priorChoice}
           />
         ))}
       </div>

@@ -73,6 +73,41 @@ export default async function ModulePage({
     },
   });
 
+  // Hydration data for client interactions.
+  const [quizAnswers, moduleProgress, latestSubmission] = await Promise.all([
+    mod.quizzes.length > 0
+      ? db.quizAnswer.findMany({
+          where: {
+            userId: session.user.id,
+            quizId: { in: mod.quizzes.map((q) => q.id) },
+          },
+          select: { quizId: true, choiceIndex: true },
+        })
+      : Promise.resolve([] as { quizId: string; choiceIndex: number }[]),
+    db.moduleProgress.findUnique({
+      where: { userId_moduleId: { userId: session.user.id, moduleId: mod.id } },
+      select: { completedAt: true },
+    }),
+    mod.exercise
+      ? db.submission.findFirst({
+          where: { userId: session.user.id, moduleId: mod.id },
+          orderBy: { submittedAt: "desc" },
+          select: {
+            id: true,
+            content: true,
+            status: true,
+            reviewerNotes: true,
+            submittedAt: true,
+            reviewedAt: true,
+          },
+        })
+      : Promise.resolve(null),
+  ]);
+  const priorChoiceByQuiz = new Map(
+    quizAnswers.map((a) => [a.quizId, a.choiceIndex]),
+  );
+  const moduleCompleted = !!moduleProgress?.completedAt;
+
   const groups = groupSections(
     mod.sections.map((s) => ({
       id: s.id,
@@ -153,6 +188,7 @@ export default async function ModulePage({
               options: q.options as string[],
               correctIndex: q.correctIndex,
               feedback: q.feedback,
+              priorChoice: priorChoiceByQuiz.get(q.id) ?? null,
             }))}
           />
         ) : null}
@@ -160,6 +196,7 @@ export default async function ModulePage({
         {mod.exercise ? (
           <ExerciseSection
             sectionNumber={exerciseNum}
+            moduleId={mod.id}
             moduleNumber={mod.number}
             introCopy="To complete this module, submit one short reflection to your manager (or designated HR contact):"
             exercise={{
@@ -170,10 +207,15 @@ export default async function ModulePage({
                 deadlineNote?: string;
               },
             }}
+            latestSubmission={latestSubmission}
           />
         ) : null}
 
-        <CompleteSection moduleNumber={mod.number} />
+        <CompleteSection
+          moduleId={mod.id}
+          moduleNumber={mod.number}
+          completed={moduleCompleted}
+        />
 
         {next ? (
           <NextModule

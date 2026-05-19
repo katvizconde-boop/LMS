@@ -1,4 +1,6 @@
 import { ExerciseBlock } from "./ExerciseBlock";
+import { ExerciseSubmissionForm } from "./ExerciseSubmissionForm";
+import type { SubmissionStatus } from "@prisma/client";
 
 type ExerciseInstructions = {
   intro?: string;
@@ -6,21 +8,34 @@ type ExerciseInstructions = {
   deadlineNote?: string;
 };
 
+type Submission = {
+  id: string;
+  content: string;
+  status: SubmissionStatus;
+  reviewerNotes: string | null;
+  submittedAt: Date;
+  reviewedAt: Date | null;
+};
+
 type Props = {
   sectionNumber: string;
+  moduleId: string;
   moduleNumber: string;
   introCopy?: string;
   exercise: {
     title: string | null;
     instructions: ExerciseInstructions;
   };
+  latestSubmission: Submission | null;
 };
 
 export function ExerciseSection({
   sectionNumber,
+  moduleId,
   moduleNumber,
   introCopy,
   exercise,
+  latestSubmission,
 }: Props) {
   return (
     <section className="border-b border-line last:border-b-0">
@@ -34,6 +49,10 @@ export function ExerciseSection({
           moduleNumber={moduleNumber}
           title={exercise.title}
           instructions={exercise.instructions}
+        />
+        <ExerciseSubmissionForm
+          moduleId={moduleId}
+          latestSubmission={latestSubmission}
         />
       </div>
     </section>

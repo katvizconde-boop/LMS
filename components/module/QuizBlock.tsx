@@ -1,29 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { cn } from "@/lib/cn";
+import { recordQuizAnswer } from "@/lib/actions/quiz";
 
 type Props = {
+  quizId: string;
   question: string;
   options: string[];
   correctIndex: number;
   feedback: string;
-  onAnswered?: (correct: boolean) => void;
+  /** If the learner has already answered, pass their stored choice for hydration. */
+  priorChoice?: number | null;
 };
 
 export function QuizBlock({
+  quizId,
   question,
   options,
   correctIndex,
   feedback,
-  onAnswered,
+  priorChoice = null,
 }: Props) {
-  const [chosen, setChosen] = useState<number | null>(null);
+  const [chosen, setChosen] = useState<number | null>(priorChoice);
+  const [pending, startTransition] = useTransition();
 
   function handleClick(i: number) {
     if (chosen !== null) return;
     setChosen(i);
-    onAnswered?.(i === correctIndex);
+    startTransition(async () => {
+      await recordQuizAnswer(quizId, i);
+    });
   }
 
   const isCorrect = chosen === correctIndex;
@@ -46,7 +53,7 @@ export function QuizBlock({
               key={i}
               type="button"
               onClick={() => handleClick(i)}
-              disabled={chosen !== null}
+              disabled={chosen !== null || pending}
               className={cn(
                 "rounded-sm border-[1.5px] px-5 py-3.5 text-left text-[15px] transition-colors",
                 state === "default" &&
