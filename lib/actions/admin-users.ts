@@ -19,20 +19,23 @@ async function requireAdmin(): Promise<{ id: string } | { error: string }> {
   return { id: session.user.id };
 }
 
-const VALID_ROLES: UserRole[] = ["EMPLOYEE", "MANAGER", "ADMIN"];
+// Only two roles in the UI now: Learner (= EMPLOYEE) and Admin.
+// MANAGER stays in the enum for backward compat but is never picked.
+const VALID_ROLES: UserRole[] = ["EMPLOYEE", "ADMIN"];
 
 export async function createUser(formData: FormData): Promise<Result> {
   const me = await requireAdmin();
   if ("error" in me) return { ok: false, error: me.error };
 
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  const name = String(formData.get("name") ?? "").trim() || null;
+  const name = String(formData.get("name") ?? "").trim();
   const roleRaw = String(formData.get("role") ?? "EMPLOYEE");
   const entityId = String(formData.get("entityId") ?? "") || null;
-  const managerId = String(formData.get("managerId") ?? "") || null;
+  const department = String(formData.get("department") ?? "").trim() || null;
   const password = String(formData.get("password") ?? "");
 
   if (!email.includes("@")) return { ok: false, error: "Invalid email." };
+  if (!name) return { ok: false, error: "Name is required." };
   if (!VALID_ROLES.includes(roleRaw as UserRole)) {
     return { ok: false, error: "Invalid role." };
   }
@@ -51,7 +54,7 @@ export async function createUser(formData: FormData): Promise<Result> {
       name,
       role: roleRaw as UserRole,
       entityId: entityId || undefined,
-      managerId: managerId || undefined,
+      department,
       passwordHash,
     },
   });
@@ -70,14 +73,10 @@ export async function updateUser(
   const name = String(formData.get("name") ?? "").trim() || null;
   const roleRaw = String(formData.get("role") ?? "EMPLOYEE");
   const entityId = String(formData.get("entityId") ?? "") || null;
-  const managerIdRaw = String(formData.get("managerId") ?? "");
-  const managerId = managerIdRaw === "" ? null : managerIdRaw;
+  const department = String(formData.get("department") ?? "").trim() || null;
 
   if (!VALID_ROLES.includes(roleRaw as UserRole)) {
     return { ok: false, error: "Invalid role." };
-  }
-  if (managerId === userId) {
-    return { ok: false, error: "User can't report to themselves." };
   }
 
   await db.user.update({
@@ -86,7 +85,7 @@ export async function updateUser(
       name,
       role: roleRaw as UserRole,
       entityId: entityId || null,
-      managerId,
+      department,
     },
   });
 

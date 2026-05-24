@@ -4,14 +4,12 @@ import { useState, useTransition } from "react";
 import { createUser } from "@/lib/actions/admin-users";
 
 type EntityOption = { id: string; code: string; name: string };
-type ManagerOption = { id: string; name: string | null; email: string };
 
 type Props = {
   entities: EntityOption[];
-  managerOptions: ManagerOption[];
 };
 
-export function AddUserForm({ entities, managerOptions }: Props) {
+export function AddUserForm({ entities }: Props) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -50,39 +48,34 @@ export function AddUserForm({ entities, managerOptions }: Props) {
     >
       <h3 className="heading-serif mb-4 text-xl text-navy">Add a user</h3>
       <div className="grid gap-3 sm:grid-cols-2">
+        <Field label="Name" required>
+          <input
+            name="name"
+            required
+            minLength={2}
+            placeholder="Jane Dela Cruz"
+            className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
+          />
+        </Field>
         <Field label="Email" required>
           <input
             name="email"
             type="email"
             required
-            placeholder="user@seven-gen.com"
+            placeholder="jane@seven-gen.com"
             className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
           />
         </Field>
-        <Field label="Name">
-          <input
-            name="name"
-            placeholder="Optional"
-            className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
-          />
-        </Field>
-        <Field label="Role">
-          <select
-            name="role"
-            defaultValue="EMPLOYEE"
-            className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
-          >
-            <option value="EMPLOYEE">Employee</option>
-            <option value="MANAGER">Manager</option>
-            <option value="ADMIN">Admin</option>
-          </select>
-        </Field>
-        <Field label="Entity">
+        <Field label="Company" required>
           <select
             name="entityId"
+            defaultValue=""
+            required
             className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
           >
-            <option value="">(none)</option>
+            <option value="" disabled>
+              Select company
+            </option>
             {entities.map((e) => (
               <option key={e.id} value={e.id}>
                 {e.code} — {e.name}
@@ -90,17 +83,21 @@ export function AddUserForm({ entities, managerOptions }: Props) {
             ))}
           </select>
         </Field>
-        <Field label="Manager">
+        <Field label="Team / Department">
+          <input
+            name="department"
+            placeholder="e.g. PR Strategy, Data Engineering"
+            className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
+          />
+        </Field>
+        <Field label="Role" required>
           <select
-            name="managerId"
+            name="role"
+            defaultValue="EMPLOYEE"
             className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
           >
-            <option value="">(none)</option>
-            {managerOptions.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name ?? m.email}
-              </option>
-            ))}
+            <option value="EMPLOYEE">Learner</option>
+            <option value="ADMIN">Admin (HR / L&amp;D)</option>
           </select>
         </Field>
         <Field label="Initial password (min 8 chars)" required>
@@ -109,7 +106,7 @@ export function AddUserForm({ entities, managerOptions }: Props) {
             type="text"
             required
             minLength={8}
-            placeholder="Tell the user this — they can change it from /profile"
+            placeholder="Tell the user — they change it from /profile"
             className="rounded-sm border border-line bg-white px-3 py-2 text-sm font-mono"
           />
         </Field>

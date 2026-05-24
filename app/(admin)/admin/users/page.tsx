@@ -14,10 +14,6 @@ export default async function UsersPage() {
     db.entity.findMany({ orderBy: { code: "asc" } }),
   ]);
 
-  const managerOptions = users
-    .filter((u) => u.role === "MANAGER" || u.role === "ADMIN")
-    .map((u) => ({ id: u.id, name: u.name, email: u.email }));
-
   return (
     <main className="flex-1">
       <header className="bg-navy text-cream">
@@ -27,7 +23,7 @@ export default async function UsersPage() {
             People.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-cream/75">
-            Manage roles, entity assignments, and manager reporting lines.
+            Manage roles, company, and team assignments.
           </p>
         </div>
       </header>
@@ -37,7 +33,7 @@ export default async function UsersPage() {
           <p className="font-mono text-xs uppercase tracking-widest text-muted">
             {users.length} user{users.length === 1 ? "" : "s"}
           </p>
-          <AddUserForm entities={entities} managerOptions={managerOptions} />
+          <AddUserForm entities={entities} />
         </div>
 
         <ul className="divide-y divide-line border-y border-line">
@@ -46,7 +42,6 @@ export default async function UsersPage() {
               key={u.id}
               user={u}
               entities={entities}
-              managerOptions={managerOptions}
               isSelf={u.id === session.user.id}
             />
           ))}

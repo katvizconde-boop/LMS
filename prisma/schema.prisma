@@ -75,6 +75,7 @@ model User {
   name          String?
   image         String?
   passwordHash  String?
+  department    String?
 
   role     UserRole @default(EMPLOYEE)
   entityId String?

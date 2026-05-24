@@ -8,8 +8,7 @@ export default async function ManagerLayout({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (session.user.role !== "MANAGER" && session.user.role !== "ADMIN") {
-    redirect("/dashboard");
-  }
+  // Admin-only: only HR/L&D can review submissions and see everyone's progress.
+  if (session.user.role !== "ADMIN") redirect("/dashboard");
   return <>{children}</>;
 }

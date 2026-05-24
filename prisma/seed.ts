@@ -69,48 +69,65 @@ async function main() {
       name: "Kat Vizconde",
       role: UserRole.ADMIN,
       entityId: sg.id,
+      department: "HR / L&D",
       passwordHash,
     },
-    update: { role: UserRole.ADMIN, name: "Kat Vizconde", passwordHash },
+    update: {
+      role: UserRole.ADMIN,
+      name: "Kat Vizconde",
+      department: "HR / L&D",
+      passwordHash,
+    },
   });
 
-  const demoManager = await db.user.upsert({
+  // Two roles only: Admin (above) and Learner (everyone else).
+  const demoLearner1 = await db.user.upsert({
     where: { email: "manager.demo@seven-gen.com" },
     create: {
       email: "manager.demo@seven-gen.com",
       name: "Maria Santos",
-      role: UserRole.MANAGER,
+      role: UserRole.EMPLOYEE,
       entityId: m2.id,
+      department: "Account Management",
       passwordHash,
     },
-    update: { role: UserRole.MANAGER, passwordHash },
+    update: {
+      role: UserRole.EMPLOYEE,
+      department: "Account Management",
+      passwordHash,
+    },
   });
 
-  const demoEmployee1 = await db.user.upsert({
+  const demoLearner2 = await db.user.upsert({
     where: { email: "employee.demo@seven-gen.com" },
     create: {
       email: "employee.demo@seven-gen.com",
       name: "Jasmine Reyes",
       role: UserRole.EMPLOYEE,
       entityId: m2.id,
-      managerId: demoManager.id,
+      department: "PR Strategy",
       passwordHash,
     },
-    update: { managerId: demoManager.id, passwordHash },
+    update: { department: "PR Strategy", passwordHash },
   });
 
-  const demoEmployee2 = await db.user.upsert({
+  const demoLearner3 = await db.user.upsert({
     where: { email: "employee2.demo@seven-gen.com" },
     create: {
       email: "employee2.demo@seven-gen.com",
       name: "Mark Cruz",
       role: UserRole.EMPLOYEE,
       entityId: mmi.id,
-      managerId: demoManager.id,
+      department: "Media Monitoring",
       passwordHash,
     },
-    update: { managerId: demoManager.id, passwordHash },
+    update: { department: "Media Monitoring", passwordHash },
   });
+
+  // Legacy aliases used elsewhere in this file
+  const demoManager = demoLearner1;
+  const demoEmployee1 = demoLearner2;
+  const demoEmployee2 = demoLearner3;
 
   // ============ PROGRAM ============
   const program = await db.program.upsert({
@@ -164,10 +181,9 @@ async function main() {
   });
 
   console.log("");
-  console.log("✓ Entities  :", [m2.code, mmi.code, rdb.code, sg.code].join(", "));
-  console.log("✓ Admin     :", admin.email, `(${admin.role})`);
-  console.log("✓ Manager   :", demoManager.email, `(${demoManager.role})`);
-  console.log("✓ Employees :", demoEmployee1.email + ",", demoEmployee2.email);
+  console.log("✓ Entities :", [m2.code, mmi.code, rdb.code, sg.code].join(", "));
+  console.log("✓ Admin    :", admin.email);
+  console.log("✓ Learners :", [demoLearner1, demoLearner2, demoLearner3].map(u => u.email).join(", "));
   console.log(`✓ All demo users password: "${DEMO_PASSWORD}" (change via /profile)`);
   console.log("✓ Program   :", program.title, `[${program.slug}]`);
   for (const spec of CLAUDE_AT_WORK_MODULES) {

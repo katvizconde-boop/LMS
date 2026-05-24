@@ -10,7 +10,6 @@ type Props = {
 export async function TopBar({ context = null }: Props) {
   const session = await auth();
   const role = session?.user?.role;
-  const showManagerNav = role === "MANAGER" || role === "ADMIN";
   const showAdminNav = role === "ADMIN";
 
   return (
@@ -54,29 +53,21 @@ export async function TopBar({ context = null }: Props) {
               <User className="h-4 w-4" />
             </Link>
           ) : null}
-          {showManagerNav ? (
+          {showAdminNav ? (
             <>
-              <Link
-                href="/team"
-                className="font-mono text-[11px] uppercase tracking-widest text-cream/80 hover:text-gold whitespace-nowrap"
-              >
-                Team
-              </Link>
               <Link
                 href="/reviews"
                 className="font-mono text-[11px] uppercase tracking-widest text-cream/80 hover:text-gold whitespace-nowrap"
               >
                 Reviews
               </Link>
+              <Link
+                href="/admin/dashboard"
+                className="font-mono text-[11px] uppercase tracking-widest text-gold hover:opacity-90 whitespace-nowrap"
+              >
+                Admin
+              </Link>
             </>
-          ) : null}
-          {showAdminNav ? (
-            <Link
-              href="/admin/dashboard"
-              className="font-mono text-[11px] uppercase tracking-widest text-gold hover:opacity-90 whitespace-nowrap"
-            >
-              Admin
-            </Link>
           ) : null}
           <SignOutButton />
         </nav>

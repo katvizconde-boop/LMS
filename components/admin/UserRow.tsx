@@ -5,7 +5,6 @@ import { Trash2, KeyRound } from "lucide-react";
 import { updateUser, deleteUser, setUserPassword } from "@/lib/actions/admin-users";
 
 type EntityOption = { id: string; code: string; name: string };
-type ManagerOption = { id: string; name: string | null; email: string };
 
 type Props = {
   user: {
@@ -14,14 +13,19 @@ type Props = {
     name: string | null;
     role: "EMPLOYEE" | "MANAGER" | "ADMIN";
     entityId: string | null;
-    managerId: string | null;
+    department: string | null;
   };
   entities: EntityOption[];
-  managerOptions: ManagerOption[];
   isSelf: boolean;
 };
 
-export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
+const ROLE_LABEL: Record<string, string> = {
+  EMPLOYEE: "Learner",
+  MANAGER: "Learner",
+  ADMIN: "Admin",
+};
+
+export function UserRow({ user, entities, isSelf }: Props) {
   const [editing, setEditing] = useState(false);
   const [resettingPw, setResettingPw] = useState(false);
   const [newPw, setNewPw] = useState("");
@@ -29,13 +33,8 @@ export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const entityName = user.entityId
+  const entityCode = user.entityId
     ? entities.find((e) => e.id === user.entityId)?.code ?? "—"
-    : "—";
-  const managerName = user.managerId
-    ? managerOptions.find((m) => m.id === user.managerId)?.name ??
-      managerOptions.find((m) => m.id === user.managerId)?.email ??
-      "—"
     : "—";
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -129,10 +128,12 @@ export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
             </form>
           ) : null}
         </div>
-        <div className="flex gap-3 font-mono text-[10px] uppercase tracking-widest text-muted sm:w-72">
-          <span>{user.role.toLowerCase()}</span>
-          <span>{entityName}</span>
-          <span className="truncate">↳ {managerName}</span>
+        <div className="flex flex-wrap gap-3 font-mono text-[10px] uppercase tracking-widest text-muted sm:w-72">
+          <span>{ROLE_LABEL[user.role] ?? user.role}</span>
+          <span>{entityCode}</span>
+          {user.department ? (
+            <span className="truncate">{user.department}</span>
+          ) : null}
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -177,6 +178,8 @@ export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
           <input
             name="name"
             defaultValue={user.name ?? ""}
+            required
+            minLength={2}
             className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
           />
         </FieldLabel>
@@ -187,18 +190,7 @@ export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
             className="rounded-sm border border-line bg-cream-deep px-3 py-2 text-sm text-muted"
           />
         </FieldLabel>
-        <FieldLabel label="Role">
-          <select
-            name="role"
-            defaultValue={user.role}
-            className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
-          >
-            <option value="EMPLOYEE">Employee</option>
-            <option value="MANAGER">Manager</option>
-            <option value="ADMIN">Admin</option>
-          </select>
-        </FieldLabel>
-        <FieldLabel label="Entity">
+        <FieldLabel label="Company">
           <select
             name="entityId"
             defaultValue={user.entityId ?? ""}
@@ -212,20 +204,22 @@ export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
             ))}
           </select>
         </FieldLabel>
-        <FieldLabel label="Manager">
+        <FieldLabel label="Team / Department">
+          <input
+            name="department"
+            defaultValue={user.department ?? ""}
+            placeholder="e.g. PR Strategy"
+            className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
+          />
+        </FieldLabel>
+        <FieldLabel label="Role">
           <select
-            name="managerId"
-            defaultValue={user.managerId ?? ""}
+            name="role"
+            defaultValue={user.role === "ADMIN" ? "ADMIN" : "EMPLOYEE"}
             className="rounded-sm border border-line bg-white px-3 py-2 text-sm"
           >
-            <option value="">(none)</option>
-            {managerOptions
-              .filter((m) => m.id !== user.id)
-              .map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name ?? m.email}
-                </option>
-              ))}
+            <option value="EMPLOYEE">Learner</option>
+            <option value="ADMIN">Admin (HR / L&amp;D)</option>
           </select>
         </FieldLabel>
         <div className="flex items-end justify-end gap-3 sm:col-span-2">
