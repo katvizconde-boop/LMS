@@ -150,9 +150,9 @@ export default async function TeamPage() {
                             {pct}%
                           </span>
                         </div>
-                        <div className="h-1 w-full overflow-hidden rounded-sm bg-cream-deep">
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream-deep">
                           <div
-                            className="h-full bg-gold transition-[width]"
+                            className="h-full rounded-full bg-gold transition-[width]"
                             style={{ width: `${pct}%` }}
                           />
                         </div>

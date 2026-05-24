@@ -22,7 +22,7 @@ export function CompleteSection({ moduleId, moduleNumber, completed }: Props) {
   return (
     <section className="border-b border-line py-20 last:border-b-0">
       <div className="mx-auto max-w-[800px] px-6 sm:px-8">
-        <div className="rounded border-2 border-gold bg-white p-8 text-center">
+        <div className="card-soft border-gold/40 p-10 text-center">
           <h3 className="mb-3 font-serif text-3xl font-normal text-navy">
             {completed
               ? "Module complete."
@@ -44,8 +44,8 @@ export function CompleteSection({ moduleId, moduleNumber, completed }: Props) {
             disabled={completed || pending}
             className={
               completed
-                ? "cursor-default rounded-sm bg-success px-9 py-3.5 text-sm font-semibold uppercase tracking-wider text-white"
-                : "rounded-sm bg-gold px-9 py-3.5 text-sm font-semibold uppercase tracking-wider text-navy transition-colors hover:bg-navy hover:text-gold disabled:opacity-60"
+                ? "btn-pill cursor-default bg-success text-white"
+                : "btn-pill btn-primary disabled:opacity-60"
             }
           >
             {completed

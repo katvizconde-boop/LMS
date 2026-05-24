@@ -62,7 +62,7 @@ export function ExerciseSubmissionForm({ moduleId, latestSubmission }: Props) {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="In 3–5 sentences, describe what task you tried, what Claude got right, where it fell short, and one thing you'd do differently next time."
-            className="w-full rounded-sm border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-muted focus:border-gold focus:outline-none"
+            className="w-full rounded-xl border border-line bg-white px-4 py-3 text-base text-ink placeholder:text-muted focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
           />
           <div className="flex items-center justify-between">
             <span className="font-mono text-xs text-muted">
@@ -71,13 +71,13 @@ export function ExerciseSubmissionForm({ moduleId, latestSubmission }: Props) {
             <button
               type="submit"
               disabled={pending || content.trim().length < 20}
-              className="rounded-sm bg-gold px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-navy transition-colors hover:bg-navy hover:text-gold disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-pill btn-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
               {pending ? "Submitting…" : "Submit for review"}
             </button>
           </div>
           {error ? (
-            <p className="rounded-sm border-l-2 border-danger bg-danger-bg px-3 py-2 text-sm text-danger">
+            <p className="rounded-xl border border-danger/30 bg-danger-bg px-4 py-3 text-sm text-danger">
               {error}
             </p>
           ) : null}
@@ -91,7 +91,7 @@ function SubmissionStatusCard({ submission }: { submission: Submission }) {
   const meta = STATUS_META[submission.status];
   return (
     <div
-      className={`rounded border-l-4 ${meta.border} ${meta.bg} p-5`}
+      className={`rounded-2xl border ${meta.border} ${meta.bg} p-5`}
     >
       <div className="flex items-center justify-between">
         <span className={`font-mono text-[10px] uppercase tracking-widest ${meta.text}`}>
@@ -109,7 +109,7 @@ function SubmissionStatusCard({ submission }: { submission: Submission }) {
         {submission.content}
       </p>
       {submission.reviewerNotes ? (
-        <div className={`mt-4 rounded-sm border-l-2 ${meta.border} bg-white/50 px-4 py-3`}>
+        <div className={`mt-4 rounded-xl border ${meta.border} bg-white/60 px-4 py-3`}>
           <div className="label-mono mb-1.5">Reviewer feedback</div>
           <p className="text-sm text-navy-soft">{submission.reviewerNotes}</p>
         </div>
@@ -125,19 +125,19 @@ const STATUS_META: Record<
   PENDING: {
     label: "Submitted · Awaiting review",
     bg: "bg-cream-deep",
-    border: "border-gold",
+    border: "border-gold/30",
     text: "text-gold",
   },
   APPROVED: {
     label: "Approved",
     bg: "bg-success-bg",
-    border: "border-success",
+    border: "border-success/30",
     text: "text-success",
   },
   REVISION_REQUESTED: {
     label: "Revision requested",
     bg: "bg-danger-bg",
-    border: "border-danger",
+    border: "border-danger/30",
     text: "text-danger",
   },
 };

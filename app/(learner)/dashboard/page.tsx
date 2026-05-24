@@ -83,7 +83,7 @@ export default async function DashboardPage() {
                 return (
                   <div
                     key={program.id}
-                    className="group flex flex-col overflow-hidden rounded border border-line bg-white shadow-[0_2px_12px_rgba(26,35,50,0.04)] transition-shadow hover:shadow-[0_4px_20px_rgba(26,35,50,0.08)]"
+                    className="group card-soft card-soft-hover flex flex-col overflow-hidden"
                   >
                     <Link
                       href={`/programs/${program.slug}`}
@@ -107,9 +107,9 @@ export default async function DashboardPage() {
                           {pct}%
                         </span>
                       </div>
-                      <div className="mt-2 h-1 w-full overflow-hidden rounded-sm bg-cream-deep">
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-cream-deep">
                         <div
-                          className="h-full bg-gold transition-[width]"
+                          className="h-full rounded-full bg-gold transition-[width]"
                           style={{ width: `${pct}%` }}
                         />
                       </div>

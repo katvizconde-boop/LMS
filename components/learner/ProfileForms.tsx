@@ -31,7 +31,7 @@ export function NameForm({ initialName }: { initialName: string }) {
           required
           minLength={2}
           maxLength={80}
-          className="rounded-sm border border-line bg-white px-4 py-2.5 text-base"
+          className="rounded-xl border border-line bg-white px-4 py-2.5 text-base focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
         />
       </label>
       <div className="flex items-center justify-between gap-3">
@@ -49,7 +49,7 @@ export function NameForm({ initialName }: { initialName: string }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-sm bg-gold px-5 py-2 text-sm font-semibold uppercase tracking-wider text-navy hover:bg-navy hover:text-gold disabled:opacity-50"
+          className="btn-pill btn-primary disabled:opacity-50"
         >
           {pending ? "Saving…" : "Save name"}
         </button>
@@ -95,7 +95,7 @@ export function PasswordForm() {
           onChange={(e) => setCurrent(e.target.value)}
           required
           autoComplete="current-password"
-          className="rounded-sm border border-line bg-white px-4 py-2.5 text-base"
+          className="rounded-xl border border-line bg-white px-4 py-2.5 text-base focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
         />
       </label>
       <label className="flex flex-col gap-2">
@@ -107,7 +107,7 @@ export function PasswordForm() {
           required
           minLength={8}
           autoComplete="new-password"
-          className="rounded-sm border border-line bg-white px-4 py-2.5 text-base"
+          className="rounded-xl border border-line bg-white px-4 py-2.5 text-base focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
         />
       </label>
       <label className="flex flex-col gap-2">
@@ -119,7 +119,7 @@ export function PasswordForm() {
           required
           minLength={8}
           autoComplete="new-password"
-          className="rounded-sm border border-line bg-white px-4 py-2.5 text-base"
+          className="rounded-xl border border-line bg-white px-4 py-2.5 text-base focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
         />
       </label>
       <div className="flex items-center justify-between gap-3">
@@ -137,7 +137,7 @@ export function PasswordForm() {
         <button
           type="submit"
           disabled={pending || !current || next.length < 8 || next !== confirm}
-          className="rounded-sm bg-gold px-5 py-2 text-sm font-semibold uppercase tracking-wider text-navy hover:bg-navy hover:text-gold disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-pill btn-primary disabled:cursor-not-allowed disabled:opacity-50"
         >
           {pending ? "Updating…" : "Update password"}
         </button>

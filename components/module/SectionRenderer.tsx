@@ -107,7 +107,7 @@ function ObjectivesBox({ intro, label, items }: ObjectivesBoxContent) {
           {intro}
         </p>
       ) : null}
-      <div className="my-10 border-l-4 border-gold bg-cream-deep px-9 py-8">
+      <div className="my-10 rounded-2xl border border-gold/20 bg-cream-deep px-9 py-8">
         <div className="label-mono mb-4">{label}</div>
         <ul className="list-none">
           {items.map((item, i) => (
@@ -146,13 +146,13 @@ function ComparisonBlock({
   const textClass = mono ? "font-mono text-[13px]" : "text-sm";
   return (
     <div className="my-8 grid gap-5 sm:grid-cols-2">
-      <div className="rounded border border-[#E8C5C5] bg-[#FDF4F4] p-6">
+      <div className="rounded-2xl border border-danger/15 bg-danger-bg/60 p-6">
         <div className="mb-2.5 font-mono text-[10px] font-medium uppercase tracking-widest text-danger">
           {badLabel}
         </div>
         <div className={`${textClass} text-navy-soft leading-relaxed`}>{badText}</div>
       </div>
-      <div className="rounded border border-success-border bg-success-bg p-6">
+      <div className="rounded-2xl border border-success/15 bg-success-bg/60 p-6">
         <div className="mb-2.5 font-mono text-[10px] font-medium uppercase tracking-widest text-success">
           {goodLabel}
         </div>
@@ -166,7 +166,7 @@ function ComparisonBlock({
 
 function ExampleCard({ label, intro, checklist, promptBlock }: ExampleCardContent) {
   return (
-    <div className="my-7 rounded border border-line bg-white p-7 shadow-[0_2px_12px_rgba(26,35,50,0.04)]">
+    <div className="card-soft my-7 p-7">
       <div className="label-mono mb-3">{label}</div>
       {intro ? <p className="text-sm text-muted">{intro}</p> : null}
       {checklist ? (
@@ -189,7 +189,7 @@ function PromptBlock({ caption, body }: PromptBlockContent) {
   return (
     <>
       {caption ? <p className="mt-2 text-sm text-muted">{caption}</p> : null}
-      <div className="mt-3 rounded-sm border-l-[3px] border-gold bg-navy px-6 py-5 font-mono text-sm leading-relaxed text-cream">
+      <div className="mt-3 rounded-xl bg-navy px-6 py-5 font-mono text-sm leading-relaxed text-cream shadow-[inset_3px_0_0_var(--color-gold)]">
         {body}
       </div>
     </>
@@ -200,7 +200,7 @@ function PromptBlock({ caption, body }: PromptBlockContent) {
 
 function TryItBlock({ tag, title, intro, steps }: TryItContent) {
   return (
-    <div className="relative my-12 overflow-hidden rounded bg-navy p-10 text-cream">
+    <div className="relative my-12 overflow-hidden rounded-3xl bg-navy p-10 text-cream shadow-[0_8px_40px_rgba(26,35,50,0.15)]">
       <div
         aria-hidden
         className="pointer-events-none absolute right-0 top-0 h-[200px] w-[200px]"
@@ -209,7 +209,7 @@ function TryItBlock({ tag, title, intro, steps }: TryItContent) {
             "radial-gradient(circle, rgba(184,148,63,0.15) 0%, transparent 70%)",
         }}
       />
-      <span className="relative mb-5 inline-block bg-gold px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-navy">
+      <span className="relative mb-5 inline-block rounded-full bg-gold px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-navy">
         {tag}
       </span>
       <h3 className="relative mb-4 font-serif text-3xl font-normal">{title}</h3>
@@ -229,12 +229,12 @@ function TryItBlock({ tag, title, intro, steps }: TryItContent) {
 
 function CalloutBlock({ variant, title, body }: CalloutContent) {
   const styles = {
-    info: "border-gold bg-cream-deep",
-    warn: "border-danger bg-danger-bg",
-    success: "border-success bg-success-bg",
+    info: "border-gold/20 bg-cream-deep",
+    warn: "border-danger/20 bg-danger-bg/70",
+    success: "border-success/20 bg-success-bg/70",
   } as const;
   return (
-    <div className={`my-8 border-l-4 ${styles[variant]} px-6 py-5`}>
+    <div className={`my-8 rounded-2xl border px-6 py-5 ${styles[variant]}`}>
       {title ? <p className="mb-2 font-semibold text-navy">{title}</p> : null}
       <p className="text-sm leading-relaxed text-navy-soft">{body}</p>
     </div>

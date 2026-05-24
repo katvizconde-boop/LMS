@@ -170,9 +170,9 @@ export default async function AdminDashboardPage() {
                             {stats?.pct ?? 0}%
                           </span>
                         </div>
-                        <div className="h-1 w-full overflow-hidden rounded-sm bg-cream-deep">
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream-deep">
                           <div
-                            className="h-full bg-gold transition-[width]"
+                            className="h-full rounded-full bg-gold transition-[width]"
                             style={{ width: `${stats?.pct ?? 0}%` }}
                           />
                         </div>
@@ -203,10 +203,8 @@ function StatCard({
   return (
     <div
       className={
-        "rounded border p-5 " +
-        (highlight
-          ? "border-gold bg-cream-deep"
-          : "border-line bg-white")
+        "card-soft p-5 " +
+        (highlight ? "!border-gold/40 !bg-cream-deep" : "")
       }
     >
       <div className="label-mono mb-2">{label}</div>
@@ -224,7 +222,7 @@ function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded border border-line bg-white p-6">
+    <div className="card-soft p-6">
       <div className="label-mono mb-4">{title}</div>
       {children}
     </div>
@@ -255,9 +253,9 @@ function BarList({
                 </span>
               </span>
             </div>
-            <div className="h-1 w-full overflow-hidden rounded-sm bg-cream-deep">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream-deep">
               <div
-                className="h-full bg-gold"
+                className="h-full rounded-full bg-gold"
                 style={{ width: `${pct}%` }}
               />
             </div>

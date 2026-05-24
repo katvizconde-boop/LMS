@@ -13,7 +13,7 @@ type Props = {
 export function ExerciseBlock({ moduleNumber, title, instructions }: Props) {
   const heading = title ?? `Module ${moduleNumber} — Submission`;
   return (
-    <div className="my-8 rounded border border-dashed border-gold bg-cream-deep p-9">
+    <div className="my-8 rounded-2xl border border-gold/30 bg-cream-deep p-9">
       <h3 className="mb-4 font-serif text-3xl font-normal text-navy">{heading}</h3>
       {instructions.intro ? (
         <p className="mb-5 text-base text-navy-soft">{instructions.intro}</p>

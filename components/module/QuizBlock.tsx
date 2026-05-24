@@ -36,7 +36,7 @@ export function QuizBlock({
   const isCorrect = chosen === correctIndex;
 
   return (
-    <div className="my-8 rounded border border-line bg-white p-8 sm:p-9">
+    <div className="card-soft my-8 p-8 sm:p-9">
       <p className="mb-5 text-lg font-semibold text-navy">{question}</p>
       <div className="flex flex-col gap-2.5">
         {options.map((opt, i) => {
@@ -55,13 +55,13 @@ export function QuizBlock({
               onClick={() => handleClick(i)}
               disabled={chosen !== null || pending}
               className={cn(
-                "rounded-sm border-[1.5px] px-5 py-3.5 text-left text-[15px] transition-colors",
+                "rounded-xl border px-5 py-3.5 text-left text-[15px] transition-all",
                 state === "default" &&
-                  "cursor-pointer border-line bg-white text-ink hover:border-gold hover:bg-cream",
+                  "cursor-pointer border-line bg-white text-ink hover:border-gold hover:bg-cream hover:shadow-sm",
                 state === "correct" &&
-                  "cursor-default border-success bg-success-bg font-semibold text-success",
+                  "cursor-default border-success/40 bg-success-bg font-semibold text-success",
                 state === "incorrect" &&
-                  "cursor-default border-[#C97070] bg-danger-bg text-danger",
+                  "cursor-default border-danger/40 bg-danger-bg text-danger",
                 state === "muted" &&
                   "cursor-default border-line bg-white text-muted",
               )}
@@ -74,10 +74,10 @@ export function QuizBlock({
       {chosen !== null ? (
         <div
           className={cn(
-            "mt-5 rounded-sm border-l-[3px] px-5 py-4 text-sm",
+            "mt-5 rounded-xl border px-5 py-4 text-sm",
             isCorrect
-              ? "border-success bg-success-bg text-[#2A4F35]"
-              : "border-[#C97070] bg-danger-bg text-[#6B2A2A]",
+              ? "border-success/30 bg-success-bg text-[#2A4F35]"
+              : "border-danger/30 bg-danger-bg text-[#6B2A2A]",
           )}
         >
           {isCorrect ? feedback : `Not quite. ${feedback}`}

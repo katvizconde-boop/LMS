@@ -20,7 +20,7 @@ export default async function LoginPage() {
             Sign in with your work email and password.
           </p>
         </div>
-        <div className="rounded border border-line bg-white p-8 shadow-[0_2px_12px_rgba(26,35,50,0.04)]">
+        <div className="card-soft p-8">
           <LoginForm />
         </div>
         <p className="mt-8 text-center text-xs uppercase tracking-widest text-muted font-mono">

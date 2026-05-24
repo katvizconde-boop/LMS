@@ -34,26 +34,23 @@ export default async function ProfilePage() {
             <p className="mt-4 text-base text-cream/70">{user.email}</p>
             <div className="mt-8 flex flex-wrap gap-6 border-t border-gold/30 pt-6">
               <Meta label="Role" value={ROLE_LABEL[user.role] ?? user.role} />
-              <Meta label="Entity" value={user.entity?.name ?? "—"} />
-              <Meta
-                label="Manager"
-                value={user.manager?.name ?? user.manager?.email ?? "—"}
-              />
+              <Meta label="Company" value={user.entity?.name ?? "—"} />
+              <Meta label="Department" value={user.department ?? "—"} />
             </div>
           </div>
         </header>
 
-        <section className="mx-auto grid max-w-[800px] gap-10 px-6 py-12 sm:px-8">
-          <div className="rounded border border-line bg-white p-6">
+        <section className="mx-auto grid max-w-[800px] gap-8 px-6 py-12 sm:px-8">
+          <div className="card-soft p-7">
             <h2 className="label-mono mb-4">Your name</h2>
             <NameForm initialName={user.name ?? ""} />
           </div>
-          <div className="rounded border border-line bg-white p-6">
+          <div className="card-soft p-7">
             <h2 className="label-mono mb-4">Change password</h2>
             <PasswordForm />
           </div>
           <p className="text-center text-xs text-muted">
-            Need to change your email, role, or manager? Ask your HR admin.
+            Need to change your email, company, or department? Ask your HR admin.
           </p>
         </section>
       </main>

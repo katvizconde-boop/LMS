@@ -2,7 +2,8 @@
 
 /* ============================================================
    Seven Generation Learning — design tokens
-   Editorial premium feel — navy + gold + cream.
+   Editorial premium, softened toward an Apple/Mac sensibility:
+   bigger radii, gentler shadows, less defined borders.
    ============================================================ */
 @theme {
   --color-navy: #1a2332;
@@ -12,7 +13,8 @@
   --color-gold-soft: #d4b66a;
   --color-cream: #faf6ef;
   --color-cream-deep: #f0eadd;
-  --color-line: #e5dfd0;
+  --color-line: #e7e1d2;
+  --color-line-soft: #ece6d8;
   --color-ink: #1a2332;
   --color-muted: #6b7280;
   --color-success: #4a7c59;
@@ -27,6 +29,13 @@
   --font-serif: var(--font-dm-serif), Georgia, serif;
 
   --tracking-mono: 0.18em;
+
+  --radius-card: 18px;
+  --radius-pill: 9999px;
+
+  --shadow-soft: 0 1px 2px rgba(26, 35, 50, 0.03), 0 8px 28px rgba(26, 35, 50, 0.05);
+  --shadow-soft-hover: 0 2px 4px rgba(26, 35, 50, 0.04), 0 16px 40px rgba(26, 35, 50, 0.09);
+  --shadow-inner-hairline: inset 0 0 0 1px rgba(26, 35, 50, 0.04);
 }
 
 html {
@@ -43,7 +52,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Utility: monospace label (recurring pattern from reference) */
+/* ----- Utilities ----- */
+
+/* Mono micro-label — kept editorial, slightly less intense */
 .label-mono {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -52,15 +63,68 @@ body {
   color: var(--color-gold);
 }
 
-/* Utility: editorial heading */
+/* Editorial serif heading */
 .heading-serif {
   font-family: var(--font-serif);
   font-weight: 400;
   letter-spacing: -0.01em;
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
-/* Prose styles inside section TEXT blocks */
+/* Soft card — rounded, gentle shadow, optional hover lift */
+.card-soft {
+  background: white;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-line-soft);
+  box-shadow: var(--shadow-soft);
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+.card-soft-hover:hover {
+  box-shadow: var(--shadow-soft-hover);
+  transform: translateY(-1px);
+}
+
+/* Pill button */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+.btn-pill:active {
+  transform: scale(0.98);
+}
+.btn-primary {
+  background: var(--color-gold);
+  color: var(--color-navy);
+  box-shadow: 0 1px 2px rgba(184, 148, 63, 0.2);
+}
+.btn-primary:hover {
+  background: var(--color-navy);
+  color: var(--color-gold);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background: white;
+  color: var(--color-navy);
+  border: 1px solid var(--color-line);
+}
+.btn-secondary:hover {
+  background: var(--color-cream-deep);
+}
+
+/* Editorial prose inside TEXT blocks */
 .prose-editorial p {
   font-size: 17px;
   color: var(--color-navy-soft);
