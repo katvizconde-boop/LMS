@@ -1,11 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import type { UserRole } from "@prisma/client";
 
 type Result = { ok: true } | { ok: false; error: string };
+
+const MIN_PASSWORD_LEN = 8;
+const BCRYPT_ROUNDS = 10;
 
 async function requireAdmin(): Promise<{ id: string } | { error: string }> {
   const session = await auth();
@@ -26,14 +30,20 @@ export async function createUser(formData: FormData): Promise<Result> {
   const roleRaw = String(formData.get("role") ?? "EMPLOYEE");
   const entityId = String(formData.get("entityId") ?? "") || null;
   const managerId = String(formData.get("managerId") ?? "") || null;
+  const password = String(formData.get("password") ?? "");
 
   if (!email.includes("@")) return { ok: false, error: "Invalid email." };
   if (!VALID_ROLES.includes(roleRaw as UserRole)) {
     return { ok: false, error: "Invalid role." };
   }
+  if (!password || password.length < MIN_PASSWORD_LEN) {
+    return { ok: false, error: `Initial password must be at least ${MIN_PASSWORD_LEN} characters.` };
+  }
 
   const existing = await db.user.findUnique({ where: { email } });
   if (existing) return { ok: false, error: "A user with that email already exists." };
+
+  const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
   await db.user.create({
     data: {
@@ -42,6 +52,7 @@ export async function createUser(formData: FormData): Promise<Result> {
       role: roleRaw as UserRole,
       entityId: entityId || undefined,
       managerId: managerId || undefined,
+      passwordHash,
     },
   });
 
@@ -79,6 +90,24 @@ export async function updateUser(
     },
   });
 
+  revalidatePath("/admin/users");
+  return { ok: true };
+}
+
+export async function setUserPassword(
+  userId: string,
+  newPassword: string,
+): Promise<Result> {
+  const me = await requireAdmin();
+  if ("error" in me) return { ok: false, error: me.error };
+  if (newPassword.length < MIN_PASSWORD_LEN) {
+    return { ok: false, error: `Password must be at least ${MIN_PASSWORD_LEN} characters.` };
+  }
+  const passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+  await db.user.update({
+    where: { id: userId },
+    data: { passwordHash },
+  });
   revalidatePath("/admin/users");
   return { ok: true };
 }

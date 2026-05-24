@@ -1,40 +1,44 @@
 import NextAuth from "next-auth";
-import Resend from "next-auth/providers/resend";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { db } from "./db";
-import { sendMagicLink } from "./email/magic-link";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
-    verifyRequest: "/login/check-email",
   },
   providers: [
-    Resend({
-      // Auth.js requires non-empty apiKey to construct the provider; the actual
-      // send is delegated to sendVerificationRequest so we route around it in dev.
-      apiKey: process.env.RESEND_API_KEY || "dev-no-op",
-      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
-      async sendVerificationRequest({ identifier, url }) {
-        await sendMagicLink({ to: identifier, url });
+    Credentials({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(creds) {
+        const email = String(creds?.email ?? "").trim().toLowerCase();
+        const password = String(creds?.password ?? "");
+        if (!email || !password) return null;
+
+        const user = await db.user.findUnique({
+          where: { email },
+          select: { id: true, email: true, name: true, passwordHash: true },
+        });
+        if (!user || !user.passwordHash) return null;
+
+        const ok = await bcrypt.compare(password, user.passwordHash);
+        if (!ok) return null;
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name ?? undefined,
+        };
       },
     }),
   ],
   callbacks: {
-    async signIn({ user }) {
-      // Block sign-ins for users not pre-provisioned by an admin.
-      // (Magic-link sign-ins create User rows by default; we want allow-list only.)
-      if (!user.email) return false;
-      const existing = await db.user.findUnique({
-        where: { email: user.email },
-        select: { id: true },
-      });
-      return Boolean(existing);
-    },
     async jwt({ token, user, trigger }) {
-      // On sign-in or update, refresh role/entity from DB.
       if (user?.email || trigger === "update") {
         const email = user?.email ?? token.email;
         if (typeof email === "string") {

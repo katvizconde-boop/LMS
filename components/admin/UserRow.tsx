@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Trash2 } from "lucide-react";
-import { updateUser, deleteUser } from "@/lib/actions/admin-users";
+import { Trash2, KeyRound } from "lucide-react";
+import { updateUser, deleteUser, setUserPassword } from "@/lib/actions/admin-users";
 
 type EntityOption = { id: string; code: string; name: string };
 type ManagerOption = { id: string; name: string | null; email: string };
@@ -23,6 +23,9 @@ type Props = {
 
 export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
   const [editing, setEditing] = useState(false);
+  const [resettingPw, setResettingPw] = useState(false);
+  const [newPw, setNewPw] = useState("");
+  const [pwMsg, setPwMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -55,6 +58,24 @@ export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
     });
   }
 
+  function handleResetPassword(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setPwMsg(null);
+    startTransition(async () => {
+      const res = await setUserPassword(user.id, newPw);
+      if (!res.ok) {
+        setPwMsg({ kind: "err", text: res.error });
+      } else {
+        setPwMsg({
+          kind: "ok",
+          text: `Password set. Tell the user: "${newPw}" — they can change it from /profile.`,
+        });
+        setNewPw("");
+        setResettingPw(false);
+      }
+    });
+  }
+
   if (!editing) {
     return (
       <li className="flex flex-col gap-2 py-5 sm:flex-row sm:items-center">
@@ -63,19 +84,75 @@ export function UserRow({ user, entities, managerOptions, isSelf }: Props) {
             {user.name ?? user.email}
           </p>
           <p className="text-sm text-muted">{user.email}</p>
+          {pwMsg ? (
+            <p
+              className={
+                "mt-1 text-xs " +
+                (pwMsg.kind === "ok" ? "text-success" : "text-danger")
+              }
+            >
+              {pwMsg.text}
+            </p>
+          ) : null}
+          {resettingPw ? (
+            <form
+              onSubmit={handleResetPassword}
+              className="mt-2 flex items-center gap-2"
+            >
+              <input
+                type="text"
+                value={newPw}
+                onChange={(e) => setNewPw(e.target.value)}
+                placeholder="New password (min 8 chars)"
+                required
+                minLength={8}
+                autoFocus
+                className="flex-1 rounded-sm border border-line bg-white px-3 py-1.5 text-sm font-mono"
+              />
+              <button
+                type="submit"
+                disabled={pending || newPw.length < 8}
+                className="rounded-sm bg-navy px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-cream hover:bg-navy-soft disabled:opacity-50"
+              >
+                Set
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setResettingPw(false);
+                  setNewPw("");
+                }}
+                className="text-xs text-muted hover:underline"
+              >
+                Cancel
+              </button>
+            </form>
+          ) : null}
         </div>
         <div className="flex gap-3 font-mono text-[10px] uppercase tracking-widest text-muted sm:w-72">
           <span>{user.role.toLowerCase()}</span>
           <span>{entityName}</span>
           <span className="truncate">↳ {managerName}</span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setEditing(true)}
             className="font-mono text-[11px] uppercase tracking-widest text-gold underline-offset-4 hover:underline"
           >
             Edit
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setResettingPw((s) => !s);
+              setPwMsg(null);
+            }}
+            className="font-mono text-[11px] uppercase tracking-widest text-navy-soft hover:text-navy inline-flex items-center gap-1"
+            aria-label="Reset password"
+          >
+            <KeyRound className="h-3.5 w-3.5" />
+            Reset PW
           </button>
           {!isSelf ? (
             <button

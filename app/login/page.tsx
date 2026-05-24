@@ -17,7 +17,7 @@ export default async function LoginPage() {
           <div className="label-mono mb-3">Seven Generation / Learning</div>
           <h1 className="heading-serif text-4xl text-navy">Welcome back.</h1>
           <p className="mt-3 text-base text-muted">
-            Sign in with your work email to access your learning programs.
+            Sign in with your work email and password.
           </p>
         </div>
         <div className="rounded border border-line bg-white p-8 shadow-[0_2px_12px_rgba(26,35,50,0.04)]">

@@ -8,30 +8,28 @@ export type LoginState = {
   email?: string;
 };
 
-export async function requestMagicLink(
+export async function passwordSignIn(
   _prev: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const password = String(formData.get("password") ?? "");
   if (!email || !email.includes("@")) {
     return { error: "Enter a valid email address.", email };
   }
+  if (!password) {
+    return { error: "Enter your password.", email };
+  }
   try {
-    await signIn("resend", {
+    await signIn("credentials", {
       email,
+      password,
       redirectTo: "/dashboard",
     });
   } catch (e) {
     if (e instanceof AuthError) {
-      if (e.type === "AccessDenied") {
-        return {
-          error:
-            "That email isn't enrolled. Ask HR to add you to a program.",
-          email,
-        };
-      }
       return {
-        error: "Couldn't send the link. Try again in a moment.",
+        error: "Email or password is incorrect. Try again, or ask your admin to reset it.",
         email,
       };
     }

@@ -103,6 +103,16 @@ export function AddUserForm({ entities, managerOptions }: Props) {
             ))}
           </select>
         </Field>
+        <Field label="Initial password (min 8 chars)" required>
+          <input
+            name="password"
+            type="text"
+            required
+            minLength={8}
+            placeholder="Tell the user this — they can change it from /profile"
+            className="rounded-sm border border-line bg-white px-3 py-2 text-sm font-mono"
+          />
+        </Field>
       </div>
       <div className="mt-4 flex items-center justify-end gap-3">
         <button

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, User } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { SignOutButton } from "./SignOutButton";
 
@@ -43,6 +43,15 @@ export async function TopBar({ context = null }: Props) {
               className="text-cream/80 hover:text-gold"
             >
               <Search className="h-4 w-4" />
+            </Link>
+          ) : null}
+          {session ? (
+            <Link
+              href="/profile"
+              aria-label="Your profile"
+              className="text-cream/80 hover:text-gold"
+            >
+              <User className="h-4 w-4" />
             </Link>
           ) : null}
           {showManagerNav ? (

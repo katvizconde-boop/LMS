@@ -18,11 +18,13 @@
  */
 
 import "dotenv/config";
+import bcrypt from "bcryptjs";
 import { PrismaClient, UserRole } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { CLAUDE_AT_WORK_MODULES, type ModuleSpec } from "./curriculum";
 
 const ADMIN_EMAIL = "kat.vizconde@seven-gen.com";
+const DEMO_PASSWORD = "Welcome2026!";
 
 async function main() {
   if (!process.env.DATABASE_URL) {
@@ -56,6 +58,10 @@ async function main() {
   ]);
 
   // ============ USERS ============
+  // Every seeded user gets the same demo password. Tell them to change it
+  // from /profile on first sign-in.
+  const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
+
   const admin = await db.user.upsert({
     where: { email: ADMIN_EMAIL },
     create: {
@@ -63,8 +69,9 @@ async function main() {
       name: "Kat Vizconde",
       role: UserRole.ADMIN,
       entityId: sg.id,
+      passwordHash,
     },
-    update: { role: UserRole.ADMIN, name: "Kat Vizconde" },
+    update: { role: UserRole.ADMIN, name: "Kat Vizconde", passwordHash },
   });
 
   const demoManager = await db.user.upsert({
@@ -74,8 +81,9 @@ async function main() {
       name: "Maria Santos",
       role: UserRole.MANAGER,
       entityId: m2.id,
+      passwordHash,
     },
-    update: { role: UserRole.MANAGER },
+    update: { role: UserRole.MANAGER, passwordHash },
   });
 
   const demoEmployee1 = await db.user.upsert({
@@ -86,8 +94,9 @@ async function main() {
       role: UserRole.EMPLOYEE,
       entityId: m2.id,
       managerId: demoManager.id,
+      passwordHash,
     },
-    update: { managerId: demoManager.id },
+    update: { managerId: demoManager.id, passwordHash },
   });
 
   const demoEmployee2 = await db.user.upsert({
@@ -98,8 +107,9 @@ async function main() {
       role: UserRole.EMPLOYEE,
       entityId: mmi.id,
       managerId: demoManager.id,
+      passwordHash,
     },
-    update: { managerId: demoManager.id },
+    update: { managerId: demoManager.id, passwordHash },
   });
 
   // ============ PROGRAM ============
@@ -158,6 +168,7 @@ async function main() {
   console.log("✓ Admin     :", admin.email, `(${admin.role})`);
   console.log("✓ Manager   :", demoManager.email, `(${demoManager.role})`);
   console.log("✓ Employees :", demoEmployee1.email + ",", demoEmployee2.email);
+  console.log(`✓ All demo users password: "${DEMO_PASSWORD}" (change via /profile)`);
   console.log("✓ Program   :", program.title, `[${program.slug}]`);
   for (const spec of CLAUDE_AT_WORK_MODULES) {
     console.log(
