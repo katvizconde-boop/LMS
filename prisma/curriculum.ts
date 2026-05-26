@@ -1853,6 +1853,417 @@ function module07(): ModuleSpec {
 }
 
 // ============================================================
+// MODULE 08 — Claude Playbook (bonus reference, always available)
+// ============================================================
+
+function module08(): ModuleSpec {
+  const next = makeCounter();
+  return {
+    position: 8,
+    number: "08",
+    title: "Claude Playbook.",
+    subtitle:
+      "Ten concrete recipes — with the exact prompts to copy.",
+    heroSubtitle:
+      "A working reference. Each section is one practical task you'll do this week, with the prompt to copy. Bookmark it.",
+    level: ModuleLevel.FOUNDATION,
+    durationMinutes: 25,
+    audienceLabel: "All employees — M2, MMI, RDB",
+    availableFrom: new Date("2026-06-01T00:00:00Z"),
+    learningObjectives: [
+      "Have a copy-ready prompt for the 10 most common Claude tasks",
+      "Know which recipe fits which situation",
+      "Adapt the templates to your own work in under 30 seconds",
+    ],
+    sections: () => [
+      {
+        position: next(),
+        number: "Section 01",
+        title: "How to use this playbook",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "This isn't a module to read through — it's a kitchen recipe card you come back to. Each section is one task. Skim until you find the one you need today, copy the prompt, and adapt the placeholders to your situation.",
+            ),
+            p(
+              s("Every prompt below"),
+              " is real and tested. Replace the bracketed parts (",
+              s("[like this]"),
+              ") with your own context.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+
+      // ---- Recipe 1: Excel / CSV ----
+      {
+        position: next(),
+        number: "Section 02",
+        title: "Work with your Excel or CSV data",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "Use this when you have a spreadsheet and want a summary, an anomaly check, or a formula written for you. Remember: Claude ",
+              s("describes"),
+              " the data and ",
+              s("writes formulas"),
+              ", but never run-the-actual-math. Paste the formula back into Sheets/Excel.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Describe a spreadsheet",
+          intro:
+            "Export your sheet as CSV (File → Download → CSV). Paste it after this prompt:",
+          promptBlock: {
+            body: "I'm pasting a CSV of [what the data is — e.g. weekly media mentions by outlet]. Tell me: (1) top 3 outlets by total, (2) any outlet whose number doubled or halved week-on-week, (3) a 2-sentence summary I can paste into a client recap. Don't calculate exact totals — describe the patterns you see.\n\n[paste your CSV here]",
+          },
+        } satisfies ExampleCardContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Get a Sheets formula",
+          intro:
+            "Skip the SUMIFS wrestling. Describe what you want, paste the formula into Sheets:",
+          promptBlock: {
+            body: "I have a Google Sheet where column A is dates, column B is [what column B is], column C is [what column C is]. Write me a formula that [what you want it to compute — e.g. \"sums column C for category 'Coverage' between Jan 1 and Jan 31\"]. Use SUMIFS or similar.",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 2: Email thread → action items ----
+      {
+        position: next(),
+        number: "Section 03",
+        title: "Pull action items out of an email thread",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "You're CC'd on a 12-message thread. Instead of reading it all, get the action items in 10 seconds.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Email thread to action list",
+          intro: "Redact client names first, then paste:",
+          promptBlock: {
+            body: "Read the email thread below. Give me: (1) a 2-sentence summary of where things stand, (2) a list of action items with owner names and due dates, (3) any open question that wasn't answered. Skip the back-and-forth detail.\n\n[paste the thread here — change client names to [CLIENT]]",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 3: Meeting transcript ----
+      {
+        position: next(),
+        number: "Section 04",
+        title: "Turn a meeting transcript into clean notes",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "Whether from Zoom, Google Meet, or a Filipino-English conversation you typed up roughly — Claude can structure it into something that goes in the client folder.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Transcript to structured notes",
+          intro: "Works on raw transcripts, Slack threads, or your own rough notes:",
+          promptBlock: {
+            body: "Below is a meeting transcript. Restructure it into: (1) Attendees, (2) Topics discussed (one bullet each, neutral tone), (3) Decisions made, (4) Action items with owner + due date, (5) Open questions. Keep it factual. Skip pleasantries.\n\n[paste transcript]",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 4: Draft an email in your voice ----
+      {
+        position: next(),
+        number: "Section 05",
+        title: "Draft an email that sounds like you",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "The trick: paste one real email you already wrote, then describe the new situation. Claude mimics the pattern — your opener, your length, your way of making requests.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Email in your voice",
+          intro: "The anchor pattern from Module 05, ready to copy:",
+          promptBlock: {
+            body: "Here's an email I wrote last week:\n\n[paste your actual email — one paragraph is enough]\n\nUsing the same voice — same opener, same tone, same way I make requests — write me a new email for this situation: [describe the new situation in 2 sentences].",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 5: Brainstorm angles ----
+      {
+        position: next(),
+        number: "Section 06",
+        title: "Brainstorm angles for a story or campaign",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "When you're staring at a blank doc and need to start somewhere. Claude is excellent at the opening half of brainstorming — generating options you can pick from.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Generate angles",
+          promptBlock: {
+            body: "I'm working on [a press release / a campaign / a pitch / a deck] about [topic]. The audience is [who]. The goal is [persuade / inform / entertain]. Give me 7 different angles I could take, each in 2 sentences. Then mark which one is the safest, which is the boldest, and which one would surprise the audience.",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 6: Quick research ----
+      {
+        position: next(),
+        number: "Section 07",
+        title: "Quick research on a topic",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "Treat Claude as a research scout — not the source. It maps the landscape; you verify with primary sources before publishing.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Research scout",
+          promptBlock: {
+            body: "I'm researching [topic] for [purpose — e.g. a client briefing]. Give me: (1) the 5 most important facts a non-expert should know, (2) what kind of source typically reports each fact (e.g. government agency, academic paper, industry body), (3) a 1-5 confidence rating per fact, (4) anything likely to have changed in the last 12 months. Don't invent URLs — describe the source type only.",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 7: Translate / tone-shift ----
+      {
+        position: next(),
+        number: "Section 08",
+        title: "Translate or shift tone",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "Useful for: forwarding an English brief to a Filipino-speaking field team, polishing a Taglish Slack thread into a formal client memo, or softening a sharp internal email before sending up.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Translate + tone-shift",
+          promptBlock: {
+            body: "Here's a message: [paste]\n\nRewrite it in [target language — Filipino / Taglish / English] with a [target tone — formal / casual / warm / direct] tone, suitable for [who will read it]. Keep the meaning identical. Don't add new information.",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 8: Compare two documents ----
+      {
+        position: next(),
+        number: "Section 09",
+        title: "Compare two documents",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "Two versions of a contract. Two drafts of a brief. Two competitor pitches. Claude can find the meaningful differences in 30 seconds.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Side-by-side comparison",
+          promptBlock: {
+            body: "Below are two versions of [what they are — e.g. a client contract]. List the substantive differences in a table with columns: (1) Topic, (2) Version A says, (3) Version B says, (4) Why this difference might matter. Ignore formatting / wording changes that don't change meaning.\n\n[VERSION A]\n[paste]\n\n[VERSION B]\n[paste]",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 9: Presentation outline ----
+      {
+        position: next(),
+        number: "Section 10",
+        title: "Outline a presentation in 60 seconds",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "Stop staring at the blank slide one. Claude gives you a working skeleton you can rearrange in 5 minutes.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Deck outline",
+          promptBlock: {
+            body: "Outline a [length, e.g. 10-slide] presentation on [topic] for [audience]. Each slide: one short title + 2-3 bullets of what to say. The goal is to [persuade / inform / sell / brief]. End with a [clear call-to-action / discussion question / next-step].",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // ---- Recipe 10: Explain like I'm new here ----
+      {
+        position: next(),
+        number: "Section 11",
+        title: "Explain something complex in plain words",
+        type: SectionType.TEXT,
+        content: {
+          paragraphs: [
+            p(
+              "For onboarding briefings, client emails when the topic is technical, or just understanding something new yourself.",
+            ),
+          ],
+        } satisfies TextContent,
+      },
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.EXAMPLE_CARD,
+        content: {
+          label: "Recipe — Plain-words explanation",
+          promptBlock: {
+            body: "Explain [topic] in plain language to [audience — e.g. a junior account manager / a client who isn't technical / yourself]. Three paragraphs max. Use one concrete real-world analogy. Avoid jargon. End with the one sentence I should remember.",
+          },
+        } satisfies ExampleCardContent,
+      },
+
+      // Closing
+      {
+        position: next(),
+        number: null,
+        title: null,
+        type: SectionType.CALLOUT,
+        content: {
+          variant: "info",
+          title: "Bookmark this module.",
+          body: "Use the 🔖 Save button in the hero. It'll appear on your dashboard under \"Saved for later\" so you can grab a recipe in two clicks any time.",
+        } satisfies CalloutContent,
+      },
+    ],
+    quizzes: () => [
+      {
+        position: 1,
+        question:
+          "You have a CSV of weekly media mentions. You want the exact average mentions per outlet, and you'll publish that number in a client deck. What's the safe move?",
+        options: [
+          "Paste the CSV into Claude and use whatever average it returns",
+          "Ask Claude to write the AVERAGEIF formula, then run that formula in Sheets to get the real number",
+          "Round whatever Claude gives you to the nearest 10",
+          "Ask Claude to count the rows manually",
+        ],
+        correctIndex: 1,
+        feedback:
+          "Claude writes the formula, the spreadsheet does the math. For numbers that'll be published, never let Claude do arithmetic directly.",
+      },
+      {
+        position: 2,
+        question:
+          "Your team uses a mix of Filipino and English in Slack. You need to send a clean English summary to a US client. What's the best prompt shape?",
+        options: [
+          "\"translate this\"",
+          "\"Paste it in English\"",
+          "\"Rewrite this in English with a formal client-facing tone. Keep meaning identical. Don't add new information.\"",
+          "\"make it sound nicer\"",
+        ],
+        correctIndex: 2,
+        feedback:
+          "Naming the target language, target tone, and explicit \"don't add information\" produces a translation you can send without editing 10 things.",
+      },
+      {
+        position: 3,
+        question:
+          "You're brainstorming campaign angles. Claude gives you 7 options. You pick one and go. What did you skip that you shouldn't?",
+        options: [
+          "Asking Claude to write the campaign for you next",
+          "Reading all 7 first and noting which are safe vs. bold vs. surprising",
+          "Saving the prompt as a template",
+          "Sharing with your manager",
+        ],
+        correctIndex: 1,
+        feedback:
+          "The point of brainstorming with Claude isn't the first idea — it's seeing the spread. Reading all 7 and tagging them by risk/reward is what separates a good pick from a default pick.",
+      },
+    ],
+    exercise: {
+      title: "Module 08 — Recipe in the wild",
+      instructions: {
+        intro:
+          "Pick one recipe from this playbook and run it on a real piece of your work this week.",
+        steps: [
+          "Pick whichever recipe matches a task on your plate this week",
+          "Adapt the placeholders to your actual context",
+          "Run it with Claude (don't forget redaction)",
+          "Submit: which recipe, what you replaced the placeholders with, and what came back. 3–5 sentences.",
+        ],
+        deadlineNote: "No fixed deadline — submit whenever you use the playbook for real.",
+      },
+    },
+  };
+}
+
+// ============================================================
 // Exported curriculum
 // ============================================================
 
@@ -1864,4 +2275,5 @@ export const CLAUDE_AT_WORK_MODULES: ModuleSpec[] = [
   module05(),
   module06(),
   module07(),
+  module08(),
 ];

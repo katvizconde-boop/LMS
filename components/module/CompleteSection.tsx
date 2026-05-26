@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { Award } from "lucide-react";
 import { markModuleComplete } from "@/lib/actions/module";
 
 type Props = {
@@ -35,25 +36,38 @@ export function CompleteSection({ moduleId, moduleNumber, completed }: Props) {
             </p>
           ) : (
             <p className="mb-6 text-[15px] text-muted">
-              Nice work. This module is checked off on your dashboard.
+              Nice work. Download your certificate, or head back to the
+              dashboard.
             </p>
           )}
-          <button
-            type="button"
-            onClick={handleClick}
-            disabled={completed || pending}
-            className={
-              completed
-                ? "btn-pill cursor-default bg-success text-white"
-                : "btn-pill btn-primary disabled:opacity-60"
-            }
-          >
-            {completed
-              ? "✓ Module " + moduleNumber + " Complete"
-              : pending
-                ? "Saving…"
-                : "Mark Module " + moduleNumber + " Complete"}
-          </button>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={handleClick}
+              disabled={completed || pending}
+              className={
+                completed
+                  ? "btn-pill cursor-default bg-success text-white"
+                  : "btn-pill btn-primary disabled:opacity-60"
+              }
+            >
+              {completed
+                ? "✓ Module " + moduleNumber + " Complete"
+                : pending
+                  ? "Saving…"
+                  : "Mark Module " + moduleNumber + " Complete"}
+            </button>
+            {completed ? (
+              <a
+                href={`/api/certificates/module/${moduleId}/pdf`}
+                className="btn-pill btn-secondary inline-flex items-center gap-2"
+                download
+              >
+                <Award className="h-4 w-4 text-gold" />
+                Download certificate
+              </a>
+            ) : null}
+          </div>
         </div>
       </div>
     </section>

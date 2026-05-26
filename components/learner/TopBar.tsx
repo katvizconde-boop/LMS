@@ -37,6 +37,14 @@ export async function TopBar({ context = null }: Props) {
         <nav className="flex shrink-0 items-center gap-4 sm:gap-5">
           {session ? (
             <Link
+              href="/kudos"
+              className="font-mono text-[11px] uppercase tracking-widest text-cream/80 hover:text-gold whitespace-nowrap"
+            >
+              Kudos
+            </Link>
+          ) : null}
+          {session ? (
+            <Link
               href="/search"
               aria-label="Search"
               className="text-cream/80 hover:text-gold"
