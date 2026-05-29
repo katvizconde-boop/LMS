@@ -62,17 +62,28 @@ export type ModuleSpec = {
   exercise: ExerciseInput | null;
 };
 
+export type ProgramSpec = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  startDate: Date;
+  endDate: Date | null;
+  audienceRules: object;
+  modules: ModuleSpec[];
+};
+
 // ---------------- text helpers ----------------
 
-function p(...parts: ParagraphPart[]): ParagraphPart[] {
+export function p(...parts: ParagraphPart[]): ParagraphPart[] {
   return parts;
 }
-function s(text: string) {
+export function s(text: string) {
   return { strong: text };
 }
 
 // Each section uses a small counter so positions stay in order without manual math.
-function makeCounter() {
+export function makeCounter() {
   let pos = 0;
   return () => ++pos;
 }
@@ -2275,5 +2286,20 @@ export const CLAUDE_AT_WORK_MODULES: ModuleSpec[] = [
   module05(),
   module06(),
   module07(),
-  module08(),
 ];
+
+export const CLAUDE_AT_WORK_PROGRAM: ProgramSpec = {
+  slug: "claude-at-work",
+  title: "Claude at Work",
+  subtitle:
+    "A 7-month curriculum on using Claude safely and effectively across all Seven Generation teams.",
+  description:
+    "From your first conversation to advanced prompting and multi-step workflows — designed for every role at M2, MMI, and RDB.",
+  startDate: new Date("2026-06-01T00:00:00Z"),
+  endDate: new Date("2026-12-31T23:59:59Z"),
+  audienceRules: {
+    entities: ["M2", "MMI", "RDB"],
+    roles: ["EMPLOYEE", "MANAGER", "ADMIN"],
+  },
+  modules: CLAUDE_AT_WORK_MODULES,
+};

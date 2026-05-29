@@ -17,6 +17,7 @@
     "db:migrate-password": "tsx prisma/migrate-add-password.ts",
     "db:migrate-department": "tsx prisma/migrate-add-department.ts",
     "db:migrate-kudos": "tsx prisma/migrate-add-kudos.ts",
+    "db:migrate-kudos": "tsx prisma/migrate-add-kudos.ts",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force && npm run db:seed",

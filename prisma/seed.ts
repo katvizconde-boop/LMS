@@ -21,7 +21,14 @@ import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { PrismaClient, UserRole } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
-import { CLAUDE_AT_WORK_MODULES, type ModuleSpec } from "./curriculum";
+import {
+  CLAUDE_AT_WORK_PROGRAM,
+  type ModuleSpec,
+  type ProgramSpec,
+} from "./curriculum";
+import { CLAUDE_PLAYBOOK_PROGRAM } from "./curriculum-playbook";
+
+const PROGRAMS: ProgramSpec[] = [CLAUDE_AT_WORK_PROGRAM, CLAUDE_PLAYBOOK_PROGRAM];
 
 const ADMIN_EMAIL = "kat.vizconde@seven-gen.com";
 const DEMO_PASSWORD = "Welcome2026!";
@@ -129,44 +136,53 @@ async function main() {
   const demoEmployee1 = demoLearner2;
   const demoEmployee2 = demoLearner3;
 
-  // ============ PROGRAM ============
-  const program = await db.program.upsert({
-    where: { slug: "claude-at-work" },
-    create: {
-      slug: "claude-at-work",
-      title: "Claude at Work",
-      subtitle:
-        "A 7-month curriculum on using Claude safely and effectively across all Seven Generation teams.",
-      description:
-        "From your first conversation to advanced prompting and multi-step workflows — designed for every role at M2, MMI, and RDB.",
-      ownerId: admin.id,
-      startDate: new Date("2026-06-01T00:00:00Z"),
-      endDate: new Date("2026-12-31T23:59:59Z"),
-      audienceRules: {
-        entities: ["M2", "MMI", "RDB"],
-        roles: ["EMPLOYEE", "MANAGER", "ADMIN"],
+  // ============ PROGRAMS + MODULES ============
+  const allUsers = [admin, demoManager, demoEmployee1, demoEmployee2];
+  let firstModuleIdOfFirstProgram = "";
+
+  for (const spec of PROGRAMS) {
+    const program = await db.program.upsert({
+      where: { slug: spec.slug },
+      create: {
+        slug: spec.slug,
+        title: spec.title,
+        subtitle: spec.subtitle,
+        description: spec.description,
+        ownerId: admin.id,
+        startDate: spec.startDate,
+        endDate: spec.endDate,
+        audienceRules: spec.audienceRules,
       },
-    },
-    update: {},
-  });
-
-  // ============ ENROLLMENTS ============
-  for (const u of [admin, demoManager, demoEmployee1, demoEmployee2]) {
-    await db.enrollment.upsert({
-      where: { userId_programId: { userId: u.id, programId: program.id } },
-      create: { userId: u.id, programId: program.id },
-      update: {},
+      update: {
+        title: spec.title,
+        subtitle: spec.subtitle,
+        description: spec.description,
+        startDate: spec.startDate,
+        endDate: spec.endDate,
+      },
     });
+
+    // Enroll every demo user in every program.
+    for (const u of allUsers) {
+      await db.enrollment.upsert({
+        where: { userId_programId: { userId: u.id, programId: program.id } },
+        create: { userId: u.id, programId: program.id },
+        update: {},
+      });
+    }
+
+    // Modules: upsert metadata + rebuild content for each.
+    const firstModule = await seedModule(db, program.id, spec.modules[0]);
+    for (const m of spec.modules.slice(1)) {
+      await seedModule(db, program.id, m);
+    }
+    if (!firstModuleIdOfFirstProgram) firstModuleIdOfFirstProgram = firstModule;
   }
 
-  // ============ MODULES (upsert metadata, rebuild content) ============
-  const firstModuleId = await seedModule(db, program.id, CLAUDE_AT_WORK_MODULES[0]);
-  for (const spec of CLAUDE_AT_WORK_MODULES.slice(1)) {
-    await seedModule(db, program.id, spec);
-  }
+  const firstModuleId = firstModuleIdOfFirstProgram;
 
   // ============ DEMO SUBMISSION ============
-  // Jasmine submits a reflection for Module 01 so Maria's review queue has data on every fresh seed.
+  // Jasmine submits a reflection for Module 01 (of Claude at Work) so the review queue has data.
   await db.submission.deleteMany({
     where: { userId: demoEmployee1.id, moduleId: firstModuleId },
   });
@@ -185,13 +201,8 @@ async function main() {
   console.log("✓ Admin    :", admin.email);
   console.log("✓ Learners :", [demoLearner1, demoLearner2, demoLearner3].map(u => u.email).join(", "));
   console.log(`✓ All demo users password: "${DEMO_PASSWORD}" (change via /profile)`);
-  console.log("✓ Program   :", program.title, `[${program.slug}]`);
-  for (const spec of CLAUDE_AT_WORK_MODULES) {
-    console.log(
-      `✓ Module ${spec.number}   :`,
-      spec.title,
-      `(unlocks ${spec.availableFrom.toISOString().slice(0, 10)})`,
-    );
+  for (const spec of PROGRAMS) {
+    console.log(`✓ Program   : ${spec.title} [${spec.slug}] — ${spec.modules.length} modules`);
   }
   console.log("");
   console.log("Done.");

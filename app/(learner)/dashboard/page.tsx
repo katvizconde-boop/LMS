@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { TopBar } from "@/components/learner/TopBar";
+import { KudosWall } from "@/components/learner/KudosWall";
 import { BookmarkCheck, Award } from "lucide-react";
 
 export const metadata = { title: "Dashboard — Seven Generation Learning" };
@@ -28,7 +29,7 @@ export default async function DashboardPage() {
   const moduleIds = enrollments.flatMap((e) =>
     e.program.modules.map((m) => m.id),
   );
-  const [progress, bookmarks] = await Promise.all([
+  const [progress, bookmarks, recentFinishes, myKudos] = await Promise.all([
     moduleIds.length
       ? db.moduleProgress.findMany({
           where: { userId, moduleId: { in: moduleIds }, completedAt: { not: null } },
@@ -44,8 +45,62 @@ export default async function DashboardPage() {
       },
       orderBy: { createdAt: "desc" },
     }),
+    // Recent module completions, across everyone.
+    db.moduleProgress.findMany({
+      where: { completedAt: { not: null } },
+      orderBy: { completedAt: "desc" },
+      take: 12,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            department: true,
+          },
+        },
+        module: {
+          select: {
+            id: true,
+            number: true,
+            title: true,
+            program: { select: { title: true } },
+          },
+        },
+      },
+    }),
+    // Kudos counts on those completions; viewer's own kudos to know what to grey out.
+    db.kudos.findMany({
+      select: { toUserId: true, moduleId: true, fromUserId: true },
+    }),
   ]);
   const completedSet = new Set(progress.map((p) => p.moduleId));
+
+  const kudosCountMap = new Map<string, number>();
+  const iKudosedSet = new Set<string>();
+  for (const k of myKudos) {
+    const key = `${k.toUserId}:${k.moduleId}`;
+    kudosCountMap.set(key, (kudosCountMap.get(key) ?? 0) + 1);
+    if (k.fromUserId === userId) iKudosedSet.add(key);
+  }
+
+  const finishes = recentFinishes.map((p) => {
+    const key = `${p.userId}:${p.moduleId}`;
+    return {
+      userId: p.userId,
+      userName: p.user.name,
+      userEmail: p.user.email,
+      userDepartment: p.user.department,
+      moduleId: p.moduleId,
+      moduleNumber: p.module.number,
+      moduleTitle: p.module.title,
+      programTitle: p.module.program.title,
+      completedAt: p.completedAt!.toISOString(),
+      kudosCount: kudosCountMap.get(key) ?? 0,
+      iKudosed: iKudosedSet.has(key),
+      isSelf: p.userId === userId,
+    };
+  });
 
   return (
     <>
@@ -134,6 +189,10 @@ export default async function DashboardPage() {
               })}
             </div>
           )}
+
+          <div className="mt-16">
+            <KudosWall finishes={finishes} />
+          </div>
 
           {bookmarks.length > 0 ? (
             <div className="mt-16">

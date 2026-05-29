@@ -98,7 +98,7 @@ model User {
   sectionViews        SectionView[]
   quizAnswers         QuizAnswer[]
   bookmarks           Bookmark[]
-  kudosGiven          Kudos[]          @relation("KudosGiven")
+  kudosSent           Kudos[]          @relation("KudosSent")
   kudosReceived       Kudos[]          @relation("KudosReceived")
 
   createdAt DateTime @default(now())
@@ -353,20 +353,22 @@ model Bookmark {
 }
 
 // ============================================================
-// KUDOS — celebrate when a teammate finishes a module
+// KUDOS WALL — congratulate teammates on module completions
 // ============================================================
 
 model Kudos {
   id         String   @id @default(cuid())
-  giverId    String
-  giver      User     @relation("KudosGiven", fields: [giverId], references: [id], onDelete: Cascade)
-  recipientId String
-  recipient  User     @relation("KudosReceived", fields: [recipientId], references: [id], onDelete: Cascade)
+  fromUserId String
+  fromUser   User     @relation("KudosSent", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUserId   String
+  toUser     User     @relation("KudosReceived", fields: [toUserId], references: [id], onDelete: Cascade)
   moduleId   String
   module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  emoji      String   @default("👏")
   createdAt  DateTime @default(now())
 
-  // One kudos per giver/recipient/module combination
-  @@unique([giverId, recipientId, moduleId])
-  @@index([recipientId, moduleId])
+  @@unique([fromUserId, toUserId, moduleId])
+  @@index([toUserId])
+  @@index([moduleId])
 }
+

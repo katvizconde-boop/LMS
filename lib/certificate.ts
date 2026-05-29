@@ -10,6 +10,8 @@ export function certificateNumber(userId: string, programId: string): string {
   return `7G-${h.slice(0, 8).toUpperCase()}`;
 }
 
+// Per-module certificate helpers live in lib/certificate-module.ts.
+
 export type CertificateEligibility =
   | {
       ok: true;

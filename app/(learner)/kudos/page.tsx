@@ -40,34 +40,44 @@ export default async function KudosPage() {
   // Pull kudos counts + whether the viewer already gave kudos for each completion.
   const pairs = recent.map((c) => ({ userId: c.userId, moduleId: c.moduleId }));
   const [kudosCounts, viewerKudos] = await Promise.all([
-    db.kudos.groupBy({
-      by: ["recipientId", "moduleId"],
-      where: {
-        OR: pairs.map((p) => ({
-          recipientId: p.userId,
-          moduleId: p.moduleId,
-        })),
-      },
-      _count: { _all: true },
-    }),
-    db.kudos.findMany({
-      where: {
-        giverId: session.user.id,
-        OR: pairs.map((p) => ({
-          recipientId: p.userId,
-          moduleId: p.moduleId,
-        })),
-      },
-      select: { recipientId: true, moduleId: true },
-    }),
+    pairs.length > 0
+      ? db.kudos.groupBy({
+          by: ["toUserId", "moduleId"],
+          where: {
+            OR: pairs.map((p) => ({
+              toUserId: p.userId,
+              moduleId: p.moduleId,
+            })),
+          },
+          _count: { _all: true },
+        })
+      : Promise.resolve(
+          [] as Array<{
+            toUserId: string;
+            moduleId: string;
+            _count: { _all: number };
+          }>,
+        ),
+    pairs.length > 0
+      ? db.kudos.findMany({
+          where: {
+            fromUserId: session.user.id,
+            OR: pairs.map((p) => ({
+              toUserId: p.userId,
+              moduleId: p.moduleId,
+            })),
+          },
+          select: { toUserId: true, moduleId: true },
+        })
+      : Promise.resolve([] as Array<{ toUserId: string; moduleId: string }>),
   ]);
 
   const countMap = new Map<string, number>();
   for (const k of kudosCounts) {
-    countMap.set(`${k.recipientId}:${k.moduleId}`, k._count._all);
+    countMap.set(`${k.toUserId}:${k.moduleId}`, k._count._all);
   }
   const givenSet = new Set(
-    viewerKudos.map((k) => `${k.recipientId}:${k.moduleId}`),
+    viewerKudos.map((k) => `${k.toUserId}:${k.moduleId}`),
   );
 
   return (

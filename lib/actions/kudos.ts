@@ -4,44 +4,36 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-type Result = { ok: true; given: boolean } | { ok: false; error: string };
+type Result =
+  | { ok: true; given: boolean; count: number }
+  | { ok: false; error: string };
 
 /**
  * Toggle a kudos from the current user to a recipient on a specific module.
- * - Returns { given: true } if kudos was added.
- * - Returns { given: false } if kudos was removed (toggling off).
- *
- * Rules:
- * - You can't kudos yourself.
- * - The recipient must have actually completed the module.
  */
 export async function toggleKudos(
-  recipientId: string,
+  toUserId: string,
   moduleId: string,
 ): Promise<Result> {
   const session = await auth();
   if (!session?.user?.id) return { ok: false, error: "Not signed in" };
-  if (session.user.id === recipientId) {
-    return { ok: false, error: "Can't give kudos to yourself." };
+  if (session.user.id === toUserId) {
+    return { ok: false, error: "Can't kudos yourself." };
   }
 
-  // Verify the recipient actually completed the module
-  const completion = await db.moduleProgress.findUnique({
-    where: { userId_moduleId: { userId: recipientId, moduleId } },
+  const completed = await db.moduleProgress.findUnique({
+    where: { userId_moduleId: { userId: toUserId, moduleId } },
     select: { completedAt: true },
   });
-  if (!completion?.completedAt) {
-    return {
-      ok: false,
-      error: "That module isn't marked complete for that learner.",
-    };
+  if (!completed?.completedAt) {
+    return { ok: false, error: "They haven't finished that module yet." };
   }
 
   const existing = await db.kudos.findUnique({
     where: {
-      giverId_recipientId_moduleId: {
-        giverId: session.user.id,
-        recipientId,
+      fromUserId_toUserId_moduleId: {
+        fromUserId: session.user.id,
+        toUserId,
         moduleId,
       },
     },
@@ -50,19 +42,23 @@ export async function toggleKudos(
 
   if (existing) {
     await db.kudos.delete({ where: { id: existing.id } });
-    revalidatePath("/kudos");
-    revalidatePath("/dashboard");
-    return { ok: true, given: false };
+  } else {
+    await db.kudos.create({
+      data: { fromUserId: session.user.id, toUserId, moduleId },
+    });
   }
 
-  await db.kudos.create({
-    data: {
-      giverId: session.user.id,
-      recipientId,
-      moduleId,
-    },
-  });
-  revalidatePath("/kudos");
+  const count = await db.kudos.count({ where: { toUserId, moduleId } });
   revalidatePath("/dashboard");
-  return { ok: true, given: true };
+  revalidatePath("/kudos");
+  return { ok: true, given: !existing, count };
+}
+
+/** Alias so KudosWall can call sendKudos. */
+export async function sendKudos(
+  toUserId: string,
+  moduleId: string,
+  _emoji: string = "👏",
+): Promise<Result> {
+  return toggleKudos(toUserId, moduleId);
 }
