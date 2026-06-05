@@ -25,7 +25,7 @@ import {
 } from "./curriculum";
 
 const OPEN_FROM = new Date("2026-06-01T00:00:00Z");
-const AUDIENCE = "All employees — M2, MMI, RDB";
+const AUDIENCE = "Pilot · Finance + HR";
 
 // ============================================================
 // MODULE 01 — Excel & CSV Data
@@ -1478,14 +1478,14 @@ export const CLAUDE_PLAYBOOK_PROGRAM: ProgramSpec = {
   slug: "claude-playbook",
   title: "Claude Playbook",
   subtitle:
-    "Ten ways to use Claude in real work — Excel, email, meetings, research, decks, and more.",
+    "Ten ways to use Claude in real work — Excel, email, meetings, research, decks, and more. Reference companion to Claude 101.",
   description:
-    "A self-paced reference. Each module is one self-contained way to use Claude — with the exact prompt you can copy, tips, gotchas, and an exercise you can do in 10 minutes.",
+    "A self-paced reference for the Finance + HR pilot. All 10 modules unlock together — pick any in any order. Each is one self-contained way to use Claude with the exact prompt you can copy, tips, gotchas, and a 10-minute exercise.",
   startDate: OPEN_FROM,
-  endDate: null,
+  endDate: new Date("2026-06-30T23:59:59Z"),
   audienceRules: {
-    entities: ["M2", "MMI", "RDB"],
-    roles: ["EMPLOYEE", "MANAGER", "ADMIN"],
+    departments: ["Finance", "HR", "HR / L&D"],
+    roles: ["EMPLOYEE", "ADMIN"],
   },
   modules: CLAUDE_PLAYBOOK_MODULES,
 };

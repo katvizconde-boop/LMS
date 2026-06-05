@@ -104,7 +104,7 @@ function module01(): ModuleSpec {
       "Your first step into working with AI — what Claude actually is, how to talk to it, and how to use it safely with company and client work.",
     level: ModuleLevel.FOUNDATION,
     durationMinutes: 35,
-    audienceLabel: "All employees — M2, MMI, RDB",
+    audienceLabel: "Pilot · Finance + HR",
     availableFrom: new Date("2026-06-01T00:00:00Z"),
     learningObjectives: [
       "Understand what Claude is — and what it isn't",
@@ -392,8 +392,8 @@ function module02(): ModuleSpec {
       "Now that you've met Claude, learn the simple shape that turns a vague question into a useful answer — the first time.",
     level: ModuleLevel.FOUNDATION,
     durationMinutes: 40,
-    audienceLabel: "All employees — M2, MMI, RDB",
-    availableFrom: new Date("2026-07-01T00:00:00Z"),
+    audienceLabel: "Pilot · Finance + HR",
+    availableFrom: new Date("2026-06-04T00:00:00Z"),
     learningObjectives: [
       "Structure a request with audience, goal, constraints, and format",
       "Use specificity instead of length to get sharper answers",
@@ -635,8 +635,8 @@ function module03(): ModuleSpec {
       "Documents are where Claude saves you the most time. Learn how to summarize, extract, and translate — and what to redact before pasting.",
     level: ModuleLevel.FOUNDATION,
     durationMinutes: 40,
-    audienceLabel: "All employees — M2, MMI, RDB",
-    availableFrom: new Date("2026-08-01T00:00:00Z"),
+    audienceLabel: "Pilot · Finance + HR",
+    availableFrom: new Date("2026-06-08T00:00:00Z"),
     learningObjectives: [
       "Paste or upload a document and ask for a focused summary",
       "Extract structured info (tables, action items, key facts) from messy text",
@@ -875,8 +875,8 @@ function module04(): ModuleSpec {
       "Claude is fast at research and sometimes wrong with conviction. Learn the verification rhythm that separates a useful draft from an embarrassing publish.",
     level: ModuleLevel.INTERMEDIATE,
     durationMinutes: 45,
-    audienceLabel: "All employees — M2, MMI, RDB",
-    availableFrom: new Date("2026-09-01T00:00:00Z"),
+    audienceLabel: "Pilot · Finance + HR",
+    availableFrom: new Date("2026-06-11T00:00:00Z"),
     learningObjectives: [
       "Use Claude to brainstorm and structure a research path",
       "Ask for sources — and know what those sources can and can't tell you",
@@ -1128,7 +1128,7 @@ function module05(): ModuleSpec {
     level: ModuleLevel.INTERMEDIATE,
     durationMinutes: 45,
     audienceLabel: "All employees — M2, MMI, RDB",
-    availableFrom: new Date("2026-10-01T00:00:00Z"),
+    availableFrom: new Date("2026-06-15T00:00:00Z"),
     learningObjectives: [
       "Anchor Claude to your house tone with a single example",
       "Choose between drafting from scratch vs. polishing your rough draft",
@@ -1378,7 +1378,7 @@ function module06(): ModuleSpec {
     level: ModuleLevel.ADVANCED,
     durationMinutes: 50,
     audienceLabel: "Analysts, researchers, anyone with spreadsheets",
-    availableFrom: new Date("2026-11-01T00:00:00Z"),
+    availableFrom: new Date("2026-06-18T00:00:00Z"),
     learningObjectives: [
       "Paste tabular data and get summaries, restructures, and anomaly checks",
       "Generate SQL or Sheets formulas by describing what you want",
@@ -1623,7 +1623,7 @@ function module07(): ModuleSpec {
     level: ModuleLevel.MASTERY,
     durationMinutes: 50,
     audienceLabel: "All employees — M2, MMI, RDB",
-    availableFrom: new Date("2026-12-01T00:00:00Z"),
+    availableFrom: new Date("2026-06-22T00:00:00Z"),
     learningObjectives: [
       "Identify your repeat tasks where Claude saves real time",
       "Use Projects to keep context across conversations",
@@ -2290,16 +2290,16 @@ export const CLAUDE_AT_WORK_MODULES: ModuleSpec[] = [
 
 export const CLAUDE_AT_WORK_PROGRAM: ProgramSpec = {
   slug: "claude-at-work",
-  title: "Claude at Work",
+  title: "Claude 101",
   subtitle:
-    "A 7-month curriculum on using Claude safely and effectively across all Seven Generation teams.",
+    "Four-week pilot for Finance and HR — from your first conversation to a workflow you'll keep.",
   description:
-    "From your first conversation to advanced prompting and multi-step workflows — designed for every role at M2, MMI, and RDB.",
+    "Seven foundation modules compressed into June 2026 for the Finance + HR pilot cohort. Two modules land each week; complete them at your own pace.",
   startDate: new Date("2026-06-01T00:00:00Z"),
-  endDate: new Date("2026-12-31T23:59:59Z"),
+  endDate: new Date("2026-06-30T23:59:59Z"),
   audienceRules: {
-    entities: ["M2", "MMI", "RDB"],
-    roles: ["EMPLOYEE", "MANAGER", "ADMIN"],
+    departments: ["Finance", "HR", "HR / L&D"],
+    roles: ["EMPLOYEE", "ADMIN"],
   },
   modules: CLAUDE_AT_WORK_MODULES,
 };
