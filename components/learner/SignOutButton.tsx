@@ -10,7 +10,7 @@ export function SignOutButton() {
     >
       <button
         type="submit"
-        className="font-mono text-[11px] uppercase tracking-widest text-cream hover:text-gold"
+        className="font-mono text-[11px] uppercase tracking-widest text-muted hover:text-coral-deep"
       >
         Sign out
       </button>

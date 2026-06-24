@@ -17,12 +17,12 @@
   --color-surface: #ffffff;
   --color-surface-alt: #fafaf6;
 
-  /* Ink */
-  --color-ink: #1a2332;
-  --color-navy: #1a2332;
-  --color-navy-soft: #2a3548;
-  --color-navy-deep: #0f1620;
-  --color-muted: #6b7280;
+  /* Ink — warm charcoal with a hint of plum, complements coral */
+  --color-ink: #2a2535;
+  --color-navy: #2a2535;
+  --color-navy-soft: #3d3548;
+  --color-navy-deep: #1a1620;
+  --color-muted: #6b6679;
 
   /* Cream (kept for warm accents — certificates, callouts) */
   --color-cream: #faf6ef;
