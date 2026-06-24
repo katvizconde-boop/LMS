@@ -6,22 +6,22 @@
    Keeps editorial serif/mono for headings and labels.
    ============================================================ */
 @theme {
-  /* Brand */
-  --color-coral: #f06292;
-  --color-coral-soft: #fbd6e1;
-  --color-coral-deep: #d94a7a;
-  --color-coral-bg: #fff1f5;
+  /* Brand — muted sage. (Token name `coral` kept for class compatibility.) */
+  --color-coral: #7BA87F;
+  --color-coral-soft: #cfdfd1;
+  --color-coral-deep: #5d8761;
+  --color-coral-bg: #eaf2eb;
 
   /* Surfaces */
-  --color-bg: #f6f5f0;
+  --color-bg: #F3F1E9;
   --color-surface: #ffffff;
-  --color-surface-alt: #fafaf6;
+  --color-surface-alt: #f8f6ee;
 
-  /* Ink — warm charcoal with a hint of plum, complements coral */
-  --color-ink: #2a2535;
-  --color-navy: #2a2535;
-  --color-navy-soft: #3d3548;
-  --color-navy-deep: #1a1620;
+  /* Ink — deep plum, complements sage. Class name `navy` kept. */
+  --color-ink: #2D2438;
+  --color-navy: #2D2438;
+  --color-navy-soft: #4a3d59;
+  --color-navy-deep: #1d1727;
   --color-muted: #6b6679;
 
   /* Cream (kept for warm accents — certificates, callouts) */
@@ -31,7 +31,7 @@
   /* Lines */
   --color-line: #e7e1d2;
   --color-line-soft: #ece6d8;
-  --color-line-cool: #e7e8ed;
+  --color-line-cool: #e5e2d7;
 
   /* Legacy gold (still referenced in cert + a few callouts) */
   --color-gold: #b8943f;
@@ -46,7 +46,7 @@
   --color-danger-border: #e8c5c5;
 
   /* Chart sample palette */
-  --color-chart-1: #f06292;
+  --color-chart-1: #7BA87F;
   --color-chart-2: #ffd166;
   --color-chart-3: #8dd1a7;
   --color-chart-4: #6ec5e9;
