@@ -27,8 +27,15 @@ import {
   type ProgramSpec,
 } from "./curriculum";
 import { CLAUDE_PLAYBOOK_PROGRAM } from "./curriculum-playbook";
+import { CLAUDE_FINANCE_PROGRAM } from "./curriculum-finance";
+import { CLAUDE_HR_PROGRAM } from "./curriculum-hr";
 
-const PROGRAMS: ProgramSpec[] = [CLAUDE_AT_WORK_PROGRAM, CLAUDE_PLAYBOOK_PROGRAM];
+const PROGRAMS: ProgramSpec[] = [
+  CLAUDE_AT_WORK_PROGRAM,
+  CLAUDE_PLAYBOOK_PROGRAM,
+  CLAUDE_FINANCE_PROGRAM,
+  CLAUDE_HR_PROGRAM,
+];
 
 const ADMIN_EMAIL = "kat.vizconde@seven-gen.com";
 const DEMO_PASSWORD = "Welcome2026!";
