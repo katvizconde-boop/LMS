@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { SideNav } from "@/components/learner/SideNav";
 
 export default async function ManagerLayout({
   children,
@@ -8,7 +9,17 @@ export default async function ManagerLayout({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  // Admin-only: only HR/L&D can review submissions and see everyone's progress.
   if (session.user.role !== "ADMIN") redirect("/dashboard");
-  return <>{children}</>;
+  const user = session.user;
+  return (
+    <div className="flex min-h-screen">
+      <SideNav
+        showAdminNav
+        userName={user.name ?? ""}
+        userEmail={user.email ?? ""}
+        userRoleLabel="Admin"
+      />
+      <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+    </div>
+  );
 }

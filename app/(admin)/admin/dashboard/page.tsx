@@ -77,7 +77,7 @@ export default async function AdminDashboardPage() {
         <div className="mx-auto max-w-[1100px] px-6 py-16 sm:px-8 sm:py-20">
           <div className="label-mono mb-6">Admin / Dashboard</div>
           <h1 className="heading-serif text-4xl sm:text-6xl">
-            Seven Generation Learning.
+            7GEN LMS.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-cream/75">
             Org-wide picture across all programs and entities.

@@ -3,7 +3,7 @@ import { requireSession } from "@/lib/session";
 import { searchForUser } from "@/lib/search";
 import { TopBar } from "@/components/learner/TopBar";
 
-export const metadata = { title: "Search — Seven Generation Learning" };
+export const metadata = { title: "Search — 7GEN LMS" };
 
 export default async function SearchPage({
   searchParams,

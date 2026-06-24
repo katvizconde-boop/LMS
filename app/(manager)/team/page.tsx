@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { getScopedReports } from "@/lib/manager";
 import { TopBar } from "@/components/learner/TopBar";
 
-export const metadata = { title: "Team — Seven Generation Learning" };
+export const metadata = { title: "Team — 7GEN LMS" };
 
 export default async function TeamPage() {
   const session = await requireSession();

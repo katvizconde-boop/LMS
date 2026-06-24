@@ -3,7 +3,7 @@ import { getReviewableSubmissions } from "@/lib/manager";
 import { TopBar } from "@/components/learner/TopBar";
 import { ReviewCard } from "@/components/manager/ReviewCard";
 
-export const metadata = { title: "Reviews — Seven Generation Learning" };
+export const metadata = { title: "Reviews — 7GEN LMS" };
 
 export default async function ReviewsPage() {
   const session = await requireSession();

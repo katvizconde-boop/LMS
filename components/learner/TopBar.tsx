@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, User } from "lucide-react";
+import { Search, Bell } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { SignOutButton } from "./SignOutButton";
 
@@ -9,77 +9,91 @@ type Props = {
 
 export async function TopBar({ context = null }: Props) {
   const session = await auth();
+  const userName = session?.user?.name ?? "";
+  const userEmail = session?.user?.email ?? "";
+  const display = userName || userEmail;
   const role = session?.user?.role;
-  const showAdminNav = role === "ADMIN";
+  const roleLabel = role === "ADMIN" ? "Admin" : "Learner";
 
   return (
-    <div className="sticky top-0 z-40 border-b border-gold/40 bg-navy text-cream">
-      <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:flex-nowrap sm:gap-6 sm:px-8 sm:py-3.5">
+    <div className="sticky top-0 z-40 border-b border-line-cool bg-surface/90 backdrop-blur">
+      <div className="flex items-center gap-4 px-6 py-3.5 sm:px-8">
+        {/* Mobile logo */}
         <Link
           href="/dashboard"
-          className="flex shrink-0 items-center font-mono text-[11px] uppercase tracking-widest text-gold hover:opacity-90 whitespace-nowrap"
+          className="font-serif text-lg tracking-tight text-navy md:hidden"
         >
-          <span className="hidden sm:inline">
-            Seven Generation <span className="text-cream">/&nbsp;Learning</span>
-          </span>
-          <span className="sm:hidden">
-            7Gen <span className="text-cream">/&nbsp;Learning</span>
-          </span>
+          7<span className="text-coral">GEN</span> LMS
         </Link>
+
+        {/* Search */}
+        <form
+          action="/search"
+          method="get"
+          className="hidden flex-1 max-w-md sm:flex"
+        >
+          <label className="flex w-full items-center gap-2 rounded-full bg-surface-alt px-4 py-2 text-sm text-navy ring-1 ring-line-cool focus-within:ring-coral-soft">
+            <Search className="h-4 w-4 text-muted" />
+            <input
+              name="q"
+              type="text"
+              placeholder="Search anything"
+              className="w-full bg-transparent text-sm placeholder:text-muted focus:outline-none"
+            />
+          </label>
+        </form>
+
         {context ? (
-          <div className="hidden flex-1 items-center justify-center gap-3 sm:flex">
-            <span className="font-mono text-[11px] uppercase tracking-widest text-cream/80 whitespace-nowrap">
+          <div className="hidden items-center gap-3 lg:flex">
+            <span className="font-mono text-[11px] uppercase tracking-widest text-muted whitespace-nowrap">
               {context.label}
             </span>
             {context.rightSlot}
           </div>
         ) : null}
-        <nav className="flex shrink-0 items-center gap-4 sm:gap-5">
+
+        <div className="ml-auto flex items-center gap-3">
           {session ? (
             <Link
               href="/kudos"
-              className="font-mono text-[11px] uppercase tracking-widest text-cream/80 hover:text-gold whitespace-nowrap"
+              aria-label="Kudos"
+              className="hidden rounded-full bg-surface-alt p-2 text-navy-soft hover:bg-coral-bg hover:text-coral-deep sm:inline-flex"
             >
-              Kudos
-            </Link>
-          ) : null}
-          {session ? (
-            <Link
-              href="/search"
-              aria-label="Search"
-              className="text-cream/80 hover:text-gold"
-            >
-              <Search className="h-4 w-4" />
+              <Bell className="h-4 w-4" />
             </Link>
           ) : null}
           {session ? (
             <Link
               href="/profile"
-              aria-label="Your profile"
-              className="text-cream/80 hover:text-gold"
+              className="flex items-center gap-2 rounded-full bg-surface-alt px-2 py-1 pl-1 hover:bg-coral-bg"
             >
-              <User className="h-4 w-4" />
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-coral text-[11px] font-semibold text-white">
+                {initials(display)}
+              </span>
+              <span className="hidden text-sm font-medium text-navy sm:inline">
+                {firstName(display)}
+              </span>
+              <span className="hidden font-mono text-[10px] uppercase tracking-widest text-muted lg:inline">
+                {roleLabel}
+              </span>
             </Link>
           ) : null}
-          {showAdminNav ? (
-            <>
-              <Link
-                href="/reviews"
-                className="font-mono text-[11px] uppercase tracking-widest text-cream/80 hover:text-gold whitespace-nowrap"
-              >
-                Reviews
-              </Link>
-              <Link
-                href="/admin/dashboard"
-                className="font-mono text-[11px] uppercase tracking-widest text-gold hover:opacity-90 whitespace-nowrap"
-              >
-                Admin
-              </Link>
-            </>
-          ) : null}
           <SignOutButton />
-        </nav>
+        </div>
       </div>
     </div>
   );
+}
+
+function initials(s: string) {
+  return s
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((x) => x[0]?.toUpperCase())
+    .join("");
+}
+
+function firstName(s: string) {
+  return s.split(/[\s@.]+/)[0] ?? s;
 }

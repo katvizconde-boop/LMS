@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { TopBar } from "@/components/learner/TopBar";
 import { KudosButton } from "@/components/kudos/KudosButton";
 
-export const metadata = { title: "Kudos — Seven Generation Learning" };
+export const metadata = { title: "Kudos — 7GEN LMS" };
 
 const PAGE_LIMIT = 30;
 

@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { LoginForm } from "./LoginForm";
 
 export const metadata = {
-  title: "Sign in — Seven Generation Learning",
+  title: "Sign in — 7GEN LMS",
 };
 
 export default async function LoginPage() {
@@ -11,10 +11,10 @@ export default async function LoginPage() {
   if (session) redirect("/dashboard");
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-cream px-6 py-12">
+    <div className="flex flex-1 items-center justify-center bg-bg px-6 py-12">
       <div className="w-full max-w-md">
         <div className="mb-10 text-center">
-          <div className="label-mono mb-3">Seven Generation / Learning</div>
+          <div className="label-mono mb-3">7GEN LMS</div>
           <h1 className="heading-serif text-4xl text-navy">Welcome back.</h1>
           <p className="mt-3 text-base text-muted">
             Sign in with your work email and password.

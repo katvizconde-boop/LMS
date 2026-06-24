@@ -1,22 +1,43 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Seven Generation Learning — design tokens
-   Editorial premium, softened toward an Apple/Mac sensibility:
-   bigger radii, gentler shadows, less defined borders.
+   7GEN LMS — design tokens
+   Coursify-inspired soft light theme with coral/pink accent.
+   Keeps editorial serif/mono for headings and labels.
    ============================================================ */
 @theme {
+  /* Brand */
+  --color-coral: #f06292;
+  --color-coral-soft: #fbd6e1;
+  --color-coral-deep: #d94a7a;
+  --color-coral-bg: #fff1f5;
+
+  /* Surfaces */
+  --color-bg: #f6f5f0;
+  --color-surface: #ffffff;
+  --color-surface-alt: #fafaf6;
+
+  /* Ink */
+  --color-ink: #1a2332;
   --color-navy: #1a2332;
   --color-navy-soft: #2a3548;
   --color-navy-deep: #0f1620;
-  --color-gold: #b8943f;
-  --color-gold-soft: #d4b66a;
+  --color-muted: #6b7280;
+
+  /* Cream (kept for warm accents — certificates, callouts) */
   --color-cream: #faf6ef;
   --color-cream-deep: #f0eadd;
+
+  /* Lines */
   --color-line: #e7e1d2;
   --color-line-soft: #ece6d8;
-  --color-ink: #1a2332;
-  --color-muted: #6b7280;
+  --color-line-cool: #e7e8ed;
+
+  /* Legacy gold (still referenced in cert + a few callouts) */
+  --color-gold: #b8943f;
+  --color-gold-soft: #d4b66a;
+
+  /* Status */
   --color-success: #4a7c59;
   --color-success-bg: #f2f7f3;
   --color-success-border: #c5d9cb;
@@ -24,13 +45,20 @@
   --color-danger-bg: #fdf4f4;
   --color-danger-border: #e8c5c5;
 
+  /* Chart sample palette */
+  --color-chart-1: #f06292;
+  --color-chart-2: #ffd166;
+  --color-chart-3: #8dd1a7;
+  --color-chart-4: #6ec5e9;
+
   --font-sans: var(--font-dm-sans), system-ui, sans-serif;
   --font-mono: var(--font-dm-mono), ui-monospace, monospace;
   --font-serif: var(--font-dm-serif), Georgia, serif;
 
   --tracking-mono: 0.18em;
 
-  --radius-card: 18px;
+  --radius-card: 20px;
+  --radius-card-lg: 24px;
   --radius-pill: 9999px;
 
   --shadow-soft: 0 1px 2px rgba(26, 35, 50, 0.03), 0 8px 28px rgba(26, 35, 50, 0.05);
@@ -43,7 +71,7 @@ html {
 }
 
 body {
-  background: var(--color-cream);
+  background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -54,16 +82,14 @@ body {
 
 /* ----- Utilities ----- */
 
-/* Mono micro-label — kept editorial, slightly less intense */
 .label-mono {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: var(--tracking-mono);
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-coral-deep);
 }
 
-/* Editorial serif heading */
 .heading-serif {
   font-family: var(--font-serif);
   font-weight: 400;
@@ -71,11 +97,11 @@ body {
   line-height: 1.1;
 }
 
-/* Soft card — rounded, gentle shadow, optional hover lift */
+/* Soft white card */
 .card-soft {
   background: white;
   border-radius: var(--radius-card);
-  border: 1px solid var(--color-line-soft);
+  border: 1px solid var(--color-line-cool);
   box-shadow: var(--shadow-soft);
   transition:
     box-shadow 0.25s ease,
@@ -92,7 +118,7 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-pill);
-  padding: 0.75rem 1.5rem;
+  padding: 0.7rem 1.4rem;
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -103,13 +129,12 @@ body {
   transform: scale(0.98);
 }
 .btn-primary {
-  background: var(--color-gold);
-  color: var(--color-navy);
-  box-shadow: 0 1px 2px rgba(184, 148, 63, 0.2);
+  background: var(--color-coral);
+  color: white;
+  box-shadow: 0 1px 2px rgba(240, 98, 146, 0.25);
 }
 .btn-primary:hover {
-  background: var(--color-navy);
-  color: var(--color-gold);
+  background: var(--color-coral-deep);
 }
 .btn-primary:disabled {
   opacity: 0.5;
@@ -118,13 +143,58 @@ body {
 .btn-secondary {
   background: white;
   color: var(--color-navy);
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--color-line-cool);
 }
 .btn-secondary:hover {
-  background: var(--color-cream-deep);
+  background: var(--color-surface-alt);
 }
 
-/* Editorial prose inside TEXT blocks */
+/* Sidebar nav item */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-navy-soft);
+  transition: background-color 0.15s, color 0.15s;
+}
+.nav-item:hover {
+  background: var(--color-coral-bg);
+  color: var(--color-coral-deep);
+}
+.nav-item-active {
+  background: var(--color-coral-bg);
+  color: var(--color-coral-deep);
+  font-weight: 600;
+}
+
+/* Status pills (for table rows) */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.status-active {
+  background: var(--color-coral-bg);
+  color: var(--color-coral-deep);
+}
+.status-done {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+.status-locked {
+  background: #f1f1f4;
+  color: #6b7280;
+}
+
+/* Editorial prose */
 .prose-editorial p {
   font-size: 17px;
   color: var(--color-navy-soft);

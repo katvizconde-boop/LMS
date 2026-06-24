@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { TopBar } from "@/components/learner/TopBar";
 import { NameForm, PasswordForm } from "@/components/learner/ProfileForms";
 
-export const metadata = { title: "Profile — Seven Generation Learning" };
+export const metadata = { title: "Profile — 7GEN LMS" };
 
 const ROLE_LABEL: Record<string, string> = {
   EMPLOYEE: "Employee",

@@ -24,9 +24,8 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Seven Generation Learning",
-  description:
-    "Self-paced learning platform for the Seven Generation Group.",
+  title: "7GEN LMS",
+  description: "Self-paced learning platform for the Seven Generation Group.",
 };
 
 export default function RootLayout({
