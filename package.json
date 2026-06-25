@@ -20,6 +20,7 @@
     "db:migrate-kudos": "tsx prisma/migrate-add-kudos.ts",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:add-shermaine": "tsx prisma/add-shermaine.ts",
     "db:reset": "prisma migrate reset --force && npm run db:seed",
     "db:studio": "prisma studio"
   },
