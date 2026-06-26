@@ -18,19 +18,11 @@ export async function TopBar({ context = null }: Props) {
   return (
     <div className="sticky top-0 z-40 border-b border-line-cool bg-surface/90 backdrop-blur">
       <div className="flex items-center gap-4 px-6 py-3.5 sm:px-8">
-        {/* Mobile logo */}
-        <Link
-          href="/dashboard"
-          className="font-serif text-lg tracking-tight text-navy md:hidden"
-        >
-          7<span className="text-coral">GEN</span> LMS
-        </Link>
-
         {/* Search */}
         <form
           action="/search"
           method="get"
-          className="hidden flex-1 max-w-md sm:flex"
+          className="flex flex-1 max-w-md"
         >
           <label className="flex w-full items-center gap-2 rounded-full bg-surface-alt px-4 py-2 text-sm text-navy ring-1 ring-line-cool focus-within:ring-coral-soft">
             <Search className="h-4 w-4 text-muted" />

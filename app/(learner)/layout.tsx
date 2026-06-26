@@ -12,7 +12,7 @@ export default async function LearnerLayout({
   const user = session.user;
   const showAdminNav = user.role === "ADMIN";
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col md:flex-row">
       <SideNav
         showAdminNav={showAdminNav}
         userName={user.name ?? ""}

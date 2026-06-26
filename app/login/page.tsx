@@ -6,6 +6,12 @@ export const metadata = {
   title: "Sign in — 7GEN LMS",
 };
 
+// Show the demo-login chips only outside production. Setting
+// SHOW_DEMO_LOGINS=true on a Vercel preview re-enables them for QA.
+const showDemoLogins =
+  process.env.NODE_ENV !== "production" ||
+  process.env.SHOW_DEMO_LOGINS === "true";
+
 export default async function LoginPage() {
   const session = await auth();
   if (session) redirect("/dashboard");
@@ -21,7 +27,7 @@ export default async function LoginPage() {
           </p>
         </div>
         <div className="card-soft p-8">
-          <LoginForm />
+          <LoginForm showDemoLogins={showDemoLogins} />
         </div>
         <p className="mt-8 text-center text-xs uppercase tracking-widest text-muted font-mono">
           Seven Generation Group

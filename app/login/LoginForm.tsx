@@ -18,7 +18,11 @@ const DEMO_LOGINS = [
   },
 ];
 
-export function LoginForm() {
+export function LoginForm({
+  showDemoLogins = false,
+}: {
+  showDemoLogins?: boolean;
+}) {
   const [state, action, pending] = useActionState(passwordSignIn, initial);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -70,6 +74,7 @@ export function LoginForm() {
         {pending ? "Signing in…" : "Sign in"}
       </button>
 
+      {showDemoLogins ? (
       <div className="mt-4 rounded-2xl bg-coral-bg/60 p-4">
         <p className="label-mono mb-3 text-center">Demo logins</p>
         <div className="flex flex-col gap-2">
@@ -96,6 +101,7 @@ export function LoginForm() {
           Password: Welcome2026!
         </p>
       </div>
+      ) : null}
 
       <p className="mt-2 text-xs text-muted">
         Forgot your password? Ask your HR admin to reset it.

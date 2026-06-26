@@ -12,7 +12,7 @@ export default async function ManagerLayout({
   if (session.user.role !== "ADMIN") redirect("/dashboard");
   const user = session.user;
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col md:flex-row">
       <SideNav
         showAdminNav
         userName={user.name ?? ""}

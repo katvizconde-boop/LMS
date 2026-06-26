@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Sparkles,
@@ -11,6 +12,8 @@ import {
   ClipboardCheck,
   Settings,
   Heart,
+  Menu,
+  X,
 } from "lucide-react";
 
 type Props = {
@@ -34,6 +37,12 @@ export function SideNav({
   userRoleLabel,
 }: Props) {
   const pathname = usePathname() ?? "";
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   const items: Item[] = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -68,8 +77,8 @@ export function SideNav({
     return pathname === it.href || pathname.startsWith(target + "/");
   };
 
-  return (
-    <aside className="sticky top-0 hidden h-screen w-[244px] shrink-0 flex-col border-r border-line-cool bg-surface px-4 py-6 md:flex">
+  const navBody = (
+    <>
       <Link
         href="/dashboard"
         className="mb-8 flex items-center gap-2 px-2 text-navy"
@@ -114,7 +123,60 @@ export function SideNav({
           </div>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="sticky top-0 hidden h-screen w-[244px] shrink-0 flex-col border-r border-line-cool bg-surface px-4 py-6 md:flex">
+        {navBody}
+      </aside>
+
+      {/* Mobile top bar (logo + hamburger) */}
+      <div className="sticky top-0 z-50 flex items-center justify-between border-b border-line-cool bg-surface px-4 py-3 md:hidden">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 text-navy"
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-coral text-white">
+            <Sparkles className="h-3.5 w-3.5" />
+          </div>
+          <span className="font-serif text-lg tracking-tight">
+            7<span className="text-coral">GEN</span> LMS
+          </span>
+        </Link>
+        <button
+          type="button"
+          aria-label="Open menu"
+          onClick={() => setMobileOpen(true)}
+          className="rounded-xl bg-coral-bg p-2 text-coral-deep"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      {mobileOpen ? (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="absolute inset-0 bg-navy/40"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside className="absolute left-0 top-0 flex h-full w-[280px] flex-col bg-surface px-4 py-6 shadow-xl">
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={() => setMobileOpen(false)}
+              className="absolute right-3 top-3 rounded-xl bg-coral-bg p-2 text-coral-deep"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            {navBody}
+          </aside>
+        </div>
+      ) : null}
+    </>
   );
 }
 
